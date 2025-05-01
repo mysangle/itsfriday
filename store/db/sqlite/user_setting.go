@@ -22,6 +22,22 @@ func (d *DB) UpsertUserSetting(ctx context.Context, upsert *store.UserSetting) (
 	return upsert, nil
 }
 
+func (d *DB) DeleteUserSetting(ctx context.Context, delete *store.DeleteUserSetting) (error) {
+	println("delete user setting:")
+	println(delete.UserID)
+	println(delete.Key)
+	result, err := d.db.ExecContext(ctx, `
+		DELETE FROM user_setting WHERE user_id = ? AND key = ?
+	`, *delete.UserID, delete.Key.String())
+	if err != nil {
+		return err
+	}
+	if _, err := result.RowsAffected(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (d *DB) ListUserSettings(ctx context.Context, find *store.FindUserSetting) ([]*store.UserSetting, error) {
 	where, args := []string{"1 = 1"}, []any{}
 

@@ -7,7 +7,9 @@ const (
 	InvalidRequest       ErrorCode = 1
 	Internal             ErrorCode = 2
 	Unauthenticated      ErrorCode = 3
-	Unknown              ErrorCode = 4
+	NotFound             ErrorCode = 4
+	PermissionDenied     ErrorCode = 5
+	Unknown              ErrorCode = 6
 )
 type ErrorResponse struct {
 	Code    ErrorCode    `json:"code"`

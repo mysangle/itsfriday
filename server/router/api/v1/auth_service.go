@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 
+	"itsfriday/internal/util"
 	"itsfriday/store"
 )
+
+// authentication service
 
 type AuthServiceServer interface {
     SignUp(echo.Context) error
@@ -22,6 +26,7 @@ type AuthServiceServer interface {
 type SignUpRequest struct {
 	Email        string `json:"email"`
     Username     string `json:"username"`
+	Nickname     string `json:"nickname"`
 	Password     string `json:"password"`
 	AvatarUrl    string `json:"avatar_url"`
 }
@@ -54,12 +59,23 @@ func (s *APIV1Service) SignUp(c echo.Context) error {
 		})
 	}
 
+	// check if nickname exists or not
+	nickname := request.Nickname
+	if nickname == "" {
+		nickname = request.Username
+	}
 	create := &store.User{
 		Email:        request.Email,
 		Username:     request.Username,
-		Nickname:     request.Username,
+		Nickname:     nickname,
 		PasswordHash: string(passwordHash),
 		Role:         store.RoleUser,
+	}
+	if !util.UIDMatcher.MatchString(strings.ToLower(create.Username)) {
+		return c.JSON(http.StatusInternalServerError, &ErrorResponse{
+			Code:    InvalidRequest,
+		    Message: fmt.Sprintf("invalid username: %s", create.Username),
+		})
 	}
 	user, err := s.Store.CreateUser(ctx, create)
 	if err != nil {

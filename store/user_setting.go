@@ -35,6 +35,11 @@ type FindUserSetting struct {
 	Key    UserSettingKey
 }
 
+type DeleteUserSetting struct {
+	UserID *int32
+	Key    UserSettingKey
+}
+
 type UserSettingKey int32
 
 const (
@@ -84,6 +89,16 @@ func (s *Store) UpsertUserSetting(ctx context.Context, upsert *UserSetting) (*Us
 	}
 	s.userSettingCache.Store(getUserSettingCacheKey(userSetting.UserID, userSetting.Key.String()), userSetting)
 	return userSetting, nil
+}
+
+func (s *Store) DeleteUserSetting(ctx context.Context, delete *DeleteUserSetting) (error) {
+	err := s.driver.DeleteUserSetting(ctx, delete)
+	if err != nil {
+		return err
+	}
+
+	s.userSettingCache.Delete(getUserSettingCacheKey(*delete.UserID, delete.Key.String()))
+	return nil
 }
 
 func (s *Store) ListUserSettings(ctx context.Context, find *FindUserSetting) ([]*UserSetting, error) {

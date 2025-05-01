@@ -1,11 +1,11 @@
 -- migration_history
-CREATE TABLE migration_history (
+CREATE TABLE IF NOT EXISTS migration_history (
   version TEXT NOT NULL PRIMARY KEY,
   created_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now'))
 );
 
 -- user
-CREATE TABLE user (
+CREATE TABLE IF NOT EXISTS user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   created_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),
   updated_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),
@@ -19,10 +19,10 @@ CREATE TABLE user (
   description TEXT NOT NULL DEFAULT ''
 );
 
-CREATE INDEX idx_user_username ON user (username);
+CREATE INDEX IF NOT EXISTS idx_user_username ON user (username);
 
 -- user_setting
-CREATE TABLE user_setting (
+CREATE TABLE IF NOT EXISTS user_setting (
   user_id INTEGER NOT NULL,
   key TEXT NOT NULL,
   value TEXT NOT NULL,

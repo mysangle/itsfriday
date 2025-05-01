@@ -19,4 +19,5 @@ type Driver interface {
 
 	UpsertUserSetting(ctx context.Context, upsert *UserSetting) (*UserSetting, error)
 	ListUserSettings(ctx context.Context, find *FindUserSetting) ([]*UserSetting, error)
+	DeleteUserSetting(ctx context.Context, delete *DeleteUserSetting) (error)
 }

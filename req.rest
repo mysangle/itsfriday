@@ -1,21 +1,80 @@
 
 @server = http://localhost:8088
 
-###
+@itsEmail = its@friday.com
+@itsUsername = skyblue
+@itsPassword = 1234
+
+@itsNewEmail = its@monday.com
+@itsNewNickname = silver
+@itsNewPassword = 4321
+
+# 1. 헬쓰 체크로 앱이 잘 작동중인지 확인
+# 2. [signup -> login -> logout -> 사용자 삭제] 이 잘 되는지 확인
+# 3. [signup, login]후 사용자 정보의 Read, Update 확인
+
+### health
 
 GET {{server}}/monitor/health HTTP/1.1
 Content-Type: application/json
 
-###
+### user
 
+# @name tempUser
 POST {{server}}/v1/signup HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "its@friday.com",
-    "username": "bluesky",
-    "password": "1234"
+  "email": "{{itsEmail}}",
+  "username": "{{itsUsername}}",
+  "password": "{{itsPassword}}"
 }
+
+###
+
+@userId = {{tempUser.response.body.id}}
+
+###
+
+# @name tempLogin
+POST {{server}}/v1/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "{{itsUsername}}",
+  "password": "{{itsPassword}}"
+}
+
+###
+
+@tempAccessToken = {{tempLogin.response.body.accessToken}}
+
+###
+
+DELETE {{server}}/v1/delete-user HTTP/1.1
+Authorization: Bearer {{tempAccessToken}}
+Content-Type: application/json
+
+{
+  "username": "{{itsUsername}}",
+  "password": "{{itsPassword}}"
+}
+
+### user
+
+# @name user
+POST {{server}}/v1/signup HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "{{itsEmail}}",
+  "username": "{{itsUsername}}",
+  "password": "{{itsPassword}}"
+}
+
+###
+
+@userId = {{user.response.body.id}}
 
 ###
 
@@ -24,8 +83,8 @@ POST {{server}}/v1/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "username": "bluesky",
-  "password": "1234"
+  "username": "{{itsUsername}}",
+  "password": "{{itsPassword}}"
 }
 
 ###
@@ -34,10 +93,116 @@ Content-Type: application/json
 
 ###
 
-POST {{server}}/v1/logout HTTP/1.1
+GET {{server}}/v1/profile HTTP/1.1
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 ###
 
+PUT {{server}}/v1/update-user HTTP/1.1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
 
+{
+  "email": "{{itsNewEmail}}",
+  "nickname": "{{itsNewNickname}}",
+  "oldPassword": "{{itsPassword}}",
+  "newPassword": "{{itsNewPassword}}",
+  "description": "new description"
+}
+
+###
+
+POST {{server}}/v1/logout HTTP/1.1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+### libro
+
+# @name libro
+POST {{server}}/v1/libro
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "title": "질병 해방",
+    "author": "피터 아티아,빌 기퍼드",
+    "translator": "이한음",
+    "pages": 751,
+    "pubYear": 2024,
+    "genre": "novel"
+}
+
+###
+
+@libroId = {{libro.response.body.id}}
+
+###
+
+GET {{server}}/v1/libro/{{libroId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+PUT {{server}}/v1/libro/{{libroId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+DELETE {{server}}/v1/libro/{{libroId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+# @name review
+POST {{server}}/v1/libro/review
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "libroId": 1,
+    "dateRead": "",
+    "rating": "이한음",
+    "review": ""
+}
+
+###
+
+@reviewId = {{review.response.body.id}}
+
+###
+
+GET {{server}}/v1/libro/review/{{reviewId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+PUT {{server}}/v1/libro/{{reviewId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+DELETE {{server}}/v1/libro/{{reviewId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+GET {{server}}/v1/libro/read?year=2024
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+GET {{server}}/v1/libro/report
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
