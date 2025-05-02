@@ -12,6 +12,7 @@ type Driver interface {
 	FindMigrationHistoryList(ctx context.Context, find *FindMigrationHistory) ([]*MigrationHistory, error)
 	UpsertMigrationHistory(ctx context.Context, upsert *UpsertMigrationHistory) (*MigrationHistory, error)
 
+	// user service
 	CreateUser(ctx context.Context, create *User) (*User, error)
 	UpdateUser(ctx context.Context, update *UpdateUser) (*User, error)
 	ListUsers(ctx context.Context, find *FindUser) ([]*User, error)
@@ -19,5 +20,17 @@ type Driver interface {
 
 	UpsertUserSetting(ctx context.Context, upsert *UserSetting) (*UserSetting, error)
 	ListUserSettings(ctx context.Context, find *FindUserSetting) ([]*UserSetting, error)
-	DeleteUserSetting(ctx context.Context, delete *DeleteUserSetting) (error)
+	DeleteUserSetting(ctx context.Context, delete *DeleteUserSetting) error
+
+	// libro service
+	CreateBook(ctx context.Context, create *Book) (*Book, error)
+	UpdateBook(ctx context.Context, update *UpdateBook) (*Book, error)
+	ListBooks(ctx context.Context, find *FindBook) ([]*Book, error)
+	DeleteBook(ctx context.Context, delete *DeleteBook) error
+	
+	CreateBookReview(ctx context.Context, create *BookReview) (*BookReview, error)
+	UpdateBookReview(ctx context.Context, update *UpdateBookReview) (*BookReview, error)
+	ListBookReviews(ctx context.Context, find *FindBookReview) ([]*BookReview, error)
+	DeleteBookReview(ctx context.Context, delete *DeleteBookReview) error
+
 }

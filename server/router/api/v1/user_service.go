@@ -87,7 +87,7 @@ func (s *APIV1Service) UpdateUser(c echo.Context) error {
 	if err := c.Bind(request); err != nil {
 		return c.JSON(http.StatusBadRequest, &ErrorResponse{
 			Code:    InvalidRequest,
-		    Message: fmt.Sprintf("invalid update request: %v", err),
+		    Message: fmt.Sprintf("invalid update user request: %v", err),
 		})
 	}
 

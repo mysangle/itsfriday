@@ -32,30 +32,32 @@ func NewAPIV1Service(secret string, profile *profile.Profile, store *store.Store
 }
 
 func RegisterAuthServiceHandler(group *echo.Group, srv AuthServiceServer) {
-    group.POST("/signup", srv.SignUp)
-	group.POST("/login", srv.Login)
-	group.POST("/logout", srv.Logout)
+    group.POST("/user/signup", srv.SignUp)
+	group.POST("/user/login", srv.Login)
+	group.POST("/user/logout", srv.Logout)
 }
 
 func RegisterUserServiceHandler(group *echo.Group, srv UserServiceServer) {
-	group.GET("/profile", srv.ProfileUser)
-	group.PUT("/update-user", srv.UpdateUser)
-	group.DELETE("/delete-user", srv.DeleteUser)
+	group.GET("/user/profile", srv.ProfileUser)
+	group.PUT("/user/update-user", srv.UpdateUser)
+	group.DELETE("/user/delete-user", srv.DeleteUser)
 }
 
 func RegisterLibroServiceHandler(group *echo.Group, srv LibroServiceServer) {
-	group.POST("/libro", srv.CreateLibro)
-	group.GET("/libro/:id", srv.GetLibro)
-	group.PUT("/libro/:id", srv.UpdateLibro)
-	group.DELETE("/libro/:id", srv.DeleteLibro)
+	group.POST("/libro/books", srv.CreateBook)
+	group.GET("/libro/books/:id", srv.GetBook)
+	group.PUT("/libro/books/:id", srv.UpdateBook)
+	group.DELETE("/libro/books/:id", srv.DeleteBook)
 
-	group.POST("/libro/review", srv.CreateLibroReview)
-	group.GET("/libro/review/:id", srv.GetLibroReview)
-	group.PUT("/libro/review/:id", srv.UpdateLibroReview)
-	group.DELETE("/libro/review/:id", srv.DeleteLibroReview)
+	group.POST("/libro/reviews", srv.CreateBookReview)
+	group.GET("/libro/reviews/:id", srv.GetBookReview)
+	group.PUT("/libro/reviews/:id", srv.UpdateBookReview)
+	group.DELETE("/libro/reviews/:id", srv.DeleteBookReview)
 
-	group.GET("/libro/read", srv.ReadLibroReview)
-	group.GET("/libro/report", srv.ReportLibroReview)
+	group.GET("/libro/dashboard", srv.Dashboard)
+	group.GET("/libro/reads", srv.ReadBook)
+	group.GET("/libro/report", srv.ReportBook)
+	group.GET("/libro/books/:id/reviews", srv.BookReviews)
 }
 
 func RegisterDineroServiceHandler(group *echo.Group, srv DineroServiceServer) {
