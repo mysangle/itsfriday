@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS user_setting (
   UNIQUE(user_id, key)
 );
 
+-- libro service --
+
 -- book
 CREATE TABLE IF NOT EXISTS book (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,3 +59,27 @@ CREATE TABLE IF NOT EXISTS book_review (
 
 CREATE INDEX IF NOT EXISTS idx_book_review_user_id_date_read ON book_review (user_id, date_read);
 CREATE INDEX IF NOT EXISTS idx_book_review_book_id_date_read ON book_review (book_id, date_read);
+
+-- monero service --
+
+-- category
+CREATE TABLE IF NOT EXISTS expense_category (
+  user_id INTEGER NOT NULL,
+  name TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_expense_category_user_id ON expense_category (user_id);
+
+-- cost
+CREATE TABLE IF NOT EXISTS expense (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),
+  user_id INTEGER NOT NULL,
+  category_id INTEGER NOT NULL,
+  date_used TEXT NOT NULL CHECK (length(date_used) = 10 AND substr(date_used, 5, 1) = '-' AND substr(date_used, 8, 1) = '-'), -- YYYY-MM-DD
+  item TEXT NOT NULL,
+  price INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_expense_user_id ON expense (user_id);
+CREATE INDEX IF NOT EXISTS idx_expense_user_id_category_id_date_used ON expense (user_id, category_id, date_used);

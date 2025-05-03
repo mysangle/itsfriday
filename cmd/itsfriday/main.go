@@ -59,6 +59,13 @@ var (
 				slog.Error("failed to migrate", "error", err)
 				return
 			}
+			if viper.GetBool("test") {
+				if err := storeInstance.InsertTestData(ctx); err != nil {
+					cancel()
+					slog.Error("failed to insert test data", "error", err)
+					return
+				}
+			}
 
             s, err := server.NewServer(ctx, profile, storeInstance)
 			if err != nil {
@@ -105,6 +112,7 @@ func init() {
     rootCmd.PersistentFlags().String("data", "", "data directory")
     rootCmd.PersistentFlags().String("driver", "sqlite", "database driver")
     rootCmd.PersistentFlags().String("dsn", "", "database source name(aka. DSN)")
+    rootCmd.PersistentFlags().Bool("test", false, "insert test data")
 
     if err := viper.BindPFlag("mode", rootCmd.PersistentFlags().Lookup("mode")); err != nil {
 		panic(err)
@@ -122,6 +130,9 @@ func init() {
 		panic(err)
 	}
     if err := viper.BindPFlag("dsn", rootCmd.PersistentFlags().Lookup("dsn")); err != nil {
+		panic(err)
+	}
+	if err := viper.BindPFlag("test", rootCmd.PersistentFlags().Lookup("test")); err != nil {
 		panic(err)
 	}
 }

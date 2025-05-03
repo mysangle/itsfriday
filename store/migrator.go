@@ -14,6 +14,7 @@ var migrationFS embed.FS
 
 const (
 	LatestSchemaFileName = "LATEST.sql"
+	TestDataFileName = "TEST_DATA.sql"
 )
 
 func (s *Store) Migrate(ctx context.Context) error {
@@ -48,6 +49,27 @@ func (s *Store) Migrate(ctx context.Context) error {
 	}
 
     return nil
+}
+
+func (s *Store) InsertTestData(ctx context.Context) error {
+	filePath := s.getMigrationBasePath() + TestDataFileName
+	bytes, err := migrationFS.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to read latest test data file: %w", err)
+	}
+	tx, err := s.driver.GetDB().Begin()
+	if err != nil {
+		return fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer tx.Rollback()
+	if err := s.execute(ctx, tx, string(bytes)); err != nil {
+		return fmt.Errorf("failed to execute SQL file %s, err %w", filePath, err)
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Store) getMigrationBasePath() string {
