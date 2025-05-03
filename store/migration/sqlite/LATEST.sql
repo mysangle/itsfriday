@@ -49,10 +49,10 @@ CREATE TABLE IF NOT EXISTS book_review (
   created_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),
   user_id INTEGER NOT NULL,
   book_id INTEGER NOT NULL,
-  date_read TEXT NOT NULL CHECK (length(date_read) = 10 AND substr(date_read, 5, 1) = '-' AND substr(date_read, 8, 1) = '-'), -- YYYY-MM-DD 형식으로 저장
+  date_read TEXT NOT NULL CHECK (length(date_read) = 10 AND substr(date_read, 5, 1) = '-' AND substr(date_read, 8, 1) = '-'), -- YYYY-MM-DD
   rating REAL NOT NULL CHECK (rating >= 0 AND rating <= 5),
   review TEXT NOT NULL DEFAULT '',
-  UNIQUE(user_id, book_id)
+  UNIQUE(user_id, book_id, date_read)
 );
 
 CREATE INDEX IF NOT EXISTS idx_book_review_user_id_date_read ON book_review (user_id, date_read);

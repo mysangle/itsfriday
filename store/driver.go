@@ -33,4 +33,7 @@ type Driver interface {
 	ListBookReviews(ctx context.Context, find *FindBookReview) ([]*BookReview, error)
 	DeleteBookReview(ctx context.Context, delete *DeleteBookReview) error
 
+	ListBooksReadInYear(ctx context.Context, userID int32, year string) ([]*BookRead, error)
+	ReportBook(ctx context.Context, userID int32) ([]*ReportBook, error)
+
 }

@@ -288,3 +288,105 @@ func (d *DB) DeleteBookReview(ctx context.Context, delete *store.DeleteBookRevie
 	}
 	return nil
 }
+
+func (d *DB) ListBooksReadInYear(ctx context.Context, userID int32, year string) ([]*store.BookRead, error) {
+    where, args := []string{"1 = 1"}, []any{}
+
+	where, args = append(where, "`book_review`.`user_id` = ?"), append(args, userID)
+	start := fmt.Sprintf("%s-01-01", year)
+	where, args = append(where, "`book_review`.`date_read` >= ?"), append(args, start)
+	end := fmt.Sprintf("%s-12-31", year)
+	where, args = append(where, "`book_review`.`date_read` <= ?"), append(args, end)
+
+	orderBy := []string{"date_read ASC"}
+	fields := []string{
+		"`book`.`id` AS `book_id`",
+		"`book_review`.`id` AS `review_id`",
+		"`book`.`title` AS `title`",
+		"`book`.`author` AS `author`",
+		"`book`.`translator` AS `translator`",
+		"`book`.`pages` AS `pages`",
+		"`book`.`pub_year` AS `pub_year`",
+		"`book`.`genre` AS `genre`",
+		"`book_review`.`date_read` AS `date_read`",
+		"`book_review`.`rating` AS `rating`",
+		"`book_review`.`review` AS `review`",
+	}
+	query := "SELECT " + strings.Join(fields, ", ") + "FROM `book` " +
+		"LEFT JOIN `book_review` ON `book`.`id` = `book_review`.`book_id`" +
+		"WHERE " + strings.Join(where, " AND ") + " " +
+		"ORDER BY " + strings.Join(orderBy, ", ")
+
+	rows, err := d.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	list := make([]*store.BookRead, 0)
+	for rows.Next() {
+		var bookRead store.BookRead
+		if err := rows.Scan(
+			&bookRead.BookID,
+			&bookRead.ReviewID,
+			&bookRead.Title,
+			&bookRead.Author,
+			&bookRead.Translator,
+			&bookRead.Pages,
+			&bookRead.PubYear,
+			&bookRead.Genre,
+			&bookRead.DateRead,
+			&bookRead.Rating,
+			&bookRead.Review,
+		); err != nil {
+			return nil, err
+		}
+		list = append(list, &bookRead)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
+func (d *DB) ReportBook(ctx context.Context, userID int32) ([]*store.ReportBook, error) {
+    where, args := []string{"1 = 1"}, []any{}
+
+	where, args = append(where, "`book_review`.`user_id` = ?"), append(args, userID)
+
+	orderBy := []string{"date_read ASC"}
+	query := `
+		SELECT
+		    strftime('%Y', date_read) AS year,
+			count(*) AS count
+		FROM book_review
+		WHERE ` + strings.Join(where, " AND ") +
+		` GROUP BY strftime('%Y', date_read)` +
+		` ORDER BY ` + strings.Join(orderBy, ", ")
+
+	rows, err := d.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	list := make([]*store.ReportBook, 0)
+	for rows.Next() {
+		var reportBook store.ReportBook
+		if err := rows.Scan(
+			&reportBook.Year,
+			&reportBook.Count,
+		); err != nil {
+			return nil, err
+		}
+		list = append(list, &reportBook)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}

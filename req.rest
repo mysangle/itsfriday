@@ -130,12 +130,32 @@ Content-Type: application/json
   "translator": "이한음",
   "pages": 751,
   "pubYear": 2024,
-  "genre": "novel"
+  "genre": "health"
 }
 
 ###
 
 @bookId = {{book.response.body.id}}
+
+###
+
+# @name book2
+POST {{server}}/v1/libro/books
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "협력의 진화",
+  "author": "로버트 액설로드",
+  "translator": "이경식",
+  "pages": 292,
+  "pubYear": 2013,
+  "genre": "science"
+}
+
+###
+
+@book2Id = {{book2.response.body.id}}
 
 ###
 
@@ -176,6 +196,24 @@ Content-Type: application/json
 ###
 
 @bookReviewId = {{book_review.response.body.id}}
+
+###
+
+# @name book2_review
+POST {{server}}/v1/libro/reviews
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "bookId": {{book2Id}},
+    "dateRead": "2025-06-12",
+    "rating": 3,
+    "review": "Good"
+}
+
+###
+
+@bookReview2Id = {{book2_review.response.body.id}}
 
 ###
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 
@@ -31,57 +33,65 @@ type LibroServiceServer interface {
 }
 
 type CreateBookRequest struct {
-	Title        string            `json:"title"`
-	Author       string            `json:"author"`
-	Translator   string            `json:"translator"`
-	Pages        int32             `json:"pages"`
-	PubYear      int32             `json:"pubYear"`
-	Genre        string            `json:"genre"`
+	Title        string              `json:"title"`
+	Author       string              `json:"author"`
+	Translator   string              `json:"translator"`
+	Pages        int32               `json:"pages"`
+	PubYear      int32               `json:"pubYear"`
+	Genre        string              `json:"genre"`
 }
 
 type UpdateBookRequest struct {
-	Title        string            `json:"title"`
-	Author       string            `json:"author"`
-	Translator   string            `json:"translator"`
-	Pages        int32             `json:"pages"`
-	PubYear      int32             `json:"pubYear"`
-	Genre        string            `json:"genre"`
+	Title        string              `json:"title"`
+	Author       string              `json:"author"`
+	Translator   string              `json:"translator"`
+	Pages        int32               `json:"pages"`
+	PubYear      int32               `json:"pubYear"`
+	Genre        string              `json:"genre"`
 }
 
 type Book struct {
-	ID           int32             `json:"id"`
-	CreatedTime  int64             `json:"createdTime"`
-	Title        string            `json:"title"`
-	Author       string            `json:"author"`
-	Translator   string            `json:"translator"`
-	Pages        int32             `json:"pages"`
-	PubYear      int32             `json:"pubYear"`
-	Genre        string            `json:"genre"`
-	Updatable    bool              `json:"updatable"`
+	ID           int32               `json:"id"`
+	CreatedTime  int64               `json:"createdTime"`
+	Title        string              `json:"title"`
+	Author       string              `json:"author"`
+	Translator   string              `json:"translator"`
+	Pages        int32               `json:"pages"`
+	PubYear      int32               `json:"pubYear"`
+	Genre        string              `json:"genre"`
+	Updatable    bool                `json:"updatable"`
 }
 
 type CreateBookReviewRequest struct {
-	BookID       int32             `json:"bookId"`
-	DateRead     string            `json:"dateRead"`
-	Rating       float32           `json:"rating"`
-	Review       string            `json:"review"`
+	BookID       int32               `json:"bookId"`
+	DateRead     string              `json:"dateRead"`
+	Rating       float32             `json:"rating"`
+	Review       string              `json:"review"`
 }
 
 type UpdateBookReviewRequest struct {
-	BookID       int32             `json:"bookId"`
-	DateRead     string            `json:"dateRead"`
-	Rating       float32           `json:"rating"`
-	Review       string            `json:"review"`
+	BookID       int32               `json:"bookId"`
+	DateRead     string              `json:"dateRead"`
+	Rating       float32             `json:"rating"`
+	Review       string              `json:"review"`
 }
 
 type BookReview struct {
-	ID           int32             `json:"id"`
-	CreatedTime  int64             `json:"createdTime"`
-	BookID       int32             `json:"bookId"`
-	DateRead     string            `json:"dateRead"`
-	Rating       float32           `json:"rating"`
-	Review       string            `json:"review"`
-	Title        string            `json:"title"`
+	ID           int32               `json:"id"`
+	CreatedTime  int64               `json:"createdTime"`
+	BookID       int32               `json:"bookId"`
+	DateRead     string              `json:"dateRead"`
+	Rating       float32             `json:"rating"`
+	Review       string              `json:"review"`
+	Title        string              `json:"title"`
+}
+
+type BooksRead struct {
+	Books        []*store.BookRead   `json:"books"`
+}
+
+type ReportBook struct {
+	Report       []*store.ReportBook `json:"report"`
 }
 
 func (s *APIV1Service) CreateBook(c echo.Context) error {
@@ -300,6 +310,13 @@ func (s *APIV1Service) CreateBookReview(c echo.Context) error {
 		    Message: fmt.Sprintf("invalid creating book review request: %v", err),
 		})
 	}
+	ok := util.ValidateDate(request.DateRead)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+		    Message: fmt.Sprintf("invalid dateRead field: %s", request.DateRead),
+		})
+	}
 
 	userID, ok := c.Get(useridContextKey).(int32)
 	if !ok {
@@ -415,6 +432,13 @@ func (s *APIV1Service) UpdateBookReview(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &ErrorResponse{
 			Code:    InvalidRequest,
 		    Message: fmt.Sprintf("invalid update book review request: %v", err),
+		})
+	}
+	ok := util.ValidateDate(request.DateRead)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+		    Message: fmt.Sprintf("invalid dateRead field: %s", request.DateRead),
 		})
 	}
 	userID, ok := c.Get(useridContextKey).(int32)
@@ -546,23 +570,70 @@ func (s *APIV1Service) Dashboard(c echo.Context) error {
 }
 
 func (s *APIV1Service) ReadBook(c echo.Context) error {
+	ctx := c.Request().Context()
 	year := c.QueryParam("year")
 	if year == "" {
-		year = "2025" // this year
+		year = strconv.Itoa(time.Now().Year()) // this year
+	} else {
+		if len(year) != 4 {
+			return c.JSON(http.StatusBadRequest, &ErrorResponse{
+				Code:    InvalidRequest,
+				Message: "invalid year in query param",
+			})
+		}
+		_, err := util.ConvertStringToInt32(year)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, &ErrorResponse{
+				Code:    InvalidRequest,
+				Message: "invalid year in query param",
+			})
+		}
 	}
 	slog.Debug("ReadBook: ", "year", year)
 
-	return c.JSON(http.StatusNotFound, &ErrorResponse{
-		Code:    Unimplemented,
-		Message: "not yet implemented",
+	userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+
+	list, err := s.Store.ListBooksReadInYear(ctx, userID, year)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get book review: %v", err),
+		})
+	}
+
+	return c.JSON(http.StatusOK, &BooksRead{
+		Books: list,
 	})
 }
 
 // year - count
 func (s *APIV1Service) ReportBook(c echo.Context) error {
-	return c.JSON(http.StatusNotFound, &ErrorResponse{
-		Code:    Unimplemented,
-		Message: "not yet implemented",
+	ctx := c.Request().Context()
+
+	userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+
+	list, err := s.Store.ReportBook(ctx, userID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get books read by year: %v", err),
+		})
+	}
+
+	return c.JSON(http.StatusOK, &ReportBook{
+		Report: list,
 	})
 }
 

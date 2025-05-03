@@ -81,6 +81,27 @@ type DeleteBookReview struct {
     ID         int32
 }
 
+type BookRead struct {
+	BookID     int32
+	ReviewID   int32
+
+	Title      string
+	Author     string
+	Translator string
+	Pages      int32
+	PubYear    int32
+	Genre      string
+
+	DateRead   string
+	Rating     float32
+	Review     string
+}
+
+type ReportBook struct {
+	Year       int32
+	Count      int32
+}
+
 func (s *Store) CreateBook(ctx context.Context, create *Book) (*Book, error) {
     book, err := s.driver.CreateBook(ctx, create)
 	if err != nil {
@@ -177,4 +198,22 @@ func (s *Store) DeleteBookReview(ctx context.Context, delete *DeleteBookReview) 
 	}
 
 	return nil
+}
+
+func (s *Store) ListBooksReadInYear(ctx context.Context, userID int32, year string) ([]*BookRead, error) {
+	list, err := s.driver.ListBooksReadInYear(ctx, userID, year)
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
+func (s *Store) ReportBook(ctx context.Context, userID int32) ([]*ReportBook, error) {
+	list, err := s.driver.ReportBook(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }
