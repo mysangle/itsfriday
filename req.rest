@@ -167,8 +167,8 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-    "bookId": 1,
-    "dateRead": "20240501",
+    "bookId": {{bookId}},
+    "dateRead": "2024-05-01",
     "rating": 3,
     "review": "Good"
 }
@@ -188,6 +188,10 @@ Content-Type: application/json
 PUT {{server}}/v1/libro/reviews/{{bookReviewId}}
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
+
+{
+  "rating": 4
+}
 
 ###
 

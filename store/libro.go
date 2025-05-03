@@ -148,13 +148,26 @@ func (s *Store) UpdateBookReview(ctx context.Context, update *UpdateBookReview) 
 	return review, nil
 }
 
-func (s *Store) ListBooksReview(ctx context.Context, find *FindBookReview) ([]*BookReview, error) {
+func (s *Store) ListBookReviews(ctx context.Context, find *FindBookReview) ([]*BookReview, error) {
     list, err := s.driver.ListBookReviews(ctx, find)
 	if err != nil {
 		return nil, err
 	}
 
 	return list, nil
+}
+
+func (s *Store) GetBookReview(ctx context.Context, find *FindBookReview) (*BookReview, error) {
+	list, err := s.ListBookReviews(ctx, find)
+	if err != nil {
+		return nil, err
+	}
+	if len(list) == 0 {
+		return nil, nil
+	}
+
+	book := list[0]
+	return book, nil
 }
 
 func (s *Store) DeleteBookReview(ctx context.Context, delete *DeleteBookReview) error {
