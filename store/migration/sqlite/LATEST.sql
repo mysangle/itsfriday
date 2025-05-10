@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS book_review (
   date_read TEXT NOT NULL CHECK (length(date_read) = 10 AND substr(date_read, 5, 1) = '-' AND substr(date_read, 8, 1) = '-'), -- YYYY-MM-DD
   rating REAL NOT NULL CHECK (rating >= 0 AND rating <= 5),
   review TEXT NOT NULL DEFAULT '',
+  public INTEGER NOT NULL DEFAULT 0,
   UNIQUE(user_id, book_id, date_read)
 );
 
@@ -64,13 +65,16 @@ CREATE INDEX IF NOT EXISTS idx_book_review_book_id_date_read ON book_review (boo
 
 -- category
 CREATE TABLE IF NOT EXISTS expense_category (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  name TEXT NOT NULL
+  name TEXT NOT NULL,
+  priority INTEGER NOT NULL DEFAULT 1,
+  UNIQUE(user_id, name)
 );
 
 CREATE INDEX IF NOT EXISTS idx_expense_category_user_id ON expense_category (user_id);
 
--- cost
+-- expense
 CREATE TABLE IF NOT EXISTS expense (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   created_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),

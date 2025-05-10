@@ -36,4 +36,8 @@ type Driver interface {
 	ListBooksReadInYear(ctx context.Context, userID int32, year string) ([]*BookRead, error)
 	ReportBook(ctx context.Context, userID int32) ([]*ReportBook, error)
 
+	CreateDineroCategory(ctx context.Context, create *DineroCategory) (*DineroCategory, error)
+	UpdateDineroCategory(ctx context.Context, update *UpdateDineroCategory) (*DineroCategory, error)
+	ListDineroCategories(ctx context.Context, find *FindDineroCategory) ([]*DineroCategory, error)
+	DeleteDineroCategory(ctx context.Context, delete *DeleteDineroCategory) error
 }

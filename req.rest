@@ -9,56 +9,12 @@
 @itsNewNickname = silver
 @itsNewPassword = 4321
 
-# 1. 헬쓰 체크로 앱이 잘 작동중인지 확인
-# 2. [signup -> login -> logout -> 사용자 삭제] 이 잘 되는지 확인
-# 3. [signup, login]후 사용자 정보의 Read, Update 확인
-
-### health
+### HEALTH
 
 GET {{server}}/monitor/health HTTP/1.1
 Content-Type: application/json
 
-### user service
-
-# @name tempUser
-POST {{server}}/v1/user/signup HTTP/1.1
-Content-Type: application/json
-
-{
-  "email": "{{itsEmail}}",
-  "username": "{{itsUsername}}",
-  "password": "{{itsPassword}}"
-}
-
-###
-
-@userId = {{tempUser.response.body.id}}
-
-###
-
-# @name tempLogin
-POST {{server}}/v1//userlogin HTTP/1.1
-Content-Type: application/json
-
-{
-  "username": "{{itsUsername}}",
-  "password": "{{itsPassword}}"
-}
-
-###
-
-@tempAccessToken = {{tempLogin.response.body.accessToken}}
-
-###
-
-DELETE {{server}}/v1/user/delete-user HTTP/1.1
-Authorization: Bearer {{tempAccessToken}}
-Content-Type: application/json
-
-{
-  "username": "{{itsUsername}}",
-  "password": "{{itsPassword}}"
-}
+### USER SERVICE ###
 
 ### user
 
@@ -117,7 +73,18 @@ POST {{server}}/v1/user/logout HTTP/1.1
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
-### libro service
+###
+
+DELETE {{server}}/v1/user/delete-user HTTP/1.1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "{{itsUsername}}",
+  "password": "{{itsPassword}}"
+}
+
+### LIBRO SERVICE ###
 
 # @name book
 POST {{server}}/v1/libro/books
@@ -262,3 +229,47 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 ###
+
+### DINERO SERVICE ###
+
+###
+
+# @name dinero_category
+POST {{server}}/v1/dinero/categories
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "name": "고정지출",
+    "priority": 1
+}
+
+###
+
+@dineroCategoryId = {{dinero_category.response.body.id}}
+
+###
+
+PUT {{server}}/v1/dinero/categories/{{dineroCategoryId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "priority": 2
+}
+
+###
+
+DELETE {{server}}/v1/dinero/categories/{{dineroCategoryId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+GET {{server}}/v1/dinero/categories
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+

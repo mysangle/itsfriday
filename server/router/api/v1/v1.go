@@ -61,7 +61,10 @@ func RegisterLibroServiceHandler(group *echo.Group, srv LibroServiceServer) {
 }
 
 func RegisterDineroServiceHandler(group *echo.Group, srv DineroServiceServer) {
-
+	group.POST("/dinero/categories", srv.CreateDineroCaterory)
+	group.PUT("/dinero/categories/:id", srv.UpdateDineroCaterory)
+	group.GET("/dinero/categories", srv.ListDineroCaterories)
+	group.DELETE("/dinero/categories/:id", srv.DeleteDineroCaterory)
 }
 
 func RegisterFitnessServiceHandler(group *echo.Group, srv FitnessServiceServer) {

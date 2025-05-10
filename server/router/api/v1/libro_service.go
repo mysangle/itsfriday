@@ -178,7 +178,7 @@ func (s *APIV1Service) UpdateBook(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, &ErrorResponse{
 			Code:    InvalidRequest,
-			Message: "failed to get user_id from url",
+			Message: "failed to get book_id from url",
 		})
 	}
 	request := new(UpdateBookRequest)

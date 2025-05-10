@@ -18,7 +18,7 @@ type Book struct {
 }
 
 type UpdateBook struct {
-    ID int32
+    ID         int32
 
 	UserID     *int32
 	Title      *string
