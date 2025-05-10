@@ -200,7 +200,7 @@ func (s *Store) DeleteBookReview(ctx context.Context, delete *DeleteBookReview) 
 	return nil
 }
 
-func (s *Store) ListBooksReadInYear(ctx context.Context, userID int32, year string) ([]*BookRead, error) {
+func (s *Store) ListBooksReadInYear(ctx context.Context, userID int32, year int32) ([]*BookRead, error) {
 	list, err := s.driver.ListBooksReadInYear(ctx, userID, year)
 	if err != nil {
 		return nil, err

@@ -55,7 +55,7 @@ func RegisterLibroServiceHandler(group *echo.Group, srv LibroServiceServer) {
 	group.DELETE("/libro/reviews/:id", srv.DeleteBookReview)
 
 	group.GET("/libro/dashboard", srv.Dashboard)
-	group.GET("/libro/reads", srv.ReadBook)
+	group.GET("/libro/reads", srv.ReadBook) // ?year=2025
 	group.GET("/libro/report", srv.ReportBook)
 	group.GET("/libro/books/:id/reviews", srv.BookReviews)
 }
@@ -63,8 +63,15 @@ func RegisterLibroServiceHandler(group *echo.Group, srv LibroServiceServer) {
 func RegisterDineroServiceHandler(group *echo.Group, srv DineroServiceServer) {
 	group.POST("/dinero/categories", srv.CreateDineroCaterory)
 	group.PUT("/dinero/categories/:id", srv.UpdateDineroCaterory)
-	group.GET("/dinero/categories", srv.ListDineroCaterories)
 	group.DELETE("/dinero/categories/:id", srv.DeleteDineroCaterory)
+	group.GET("/dinero/categories", srv.ListDineroCaterories)
+
+	group.POST("/dinero/expenses", srv.CreateDineroExpense)
+	group.PUT("/dinero/expenses/:id", srv.UpdateDineroExpense)
+	group.DELETE("/dinero/expenses/:id", srv.DeleteDineroExpense)
+	group.GET("/dinero/expenses", srv.ListDineroExpenses) // ?year=2025?month=5
+
+	group.GET("/dinero/report", srv.ReportDinero) // ?year=2025&month=5
 }
 
 func RegisterFitnessServiceHandler(group *echo.Group, srv FitnessServiceServer) {

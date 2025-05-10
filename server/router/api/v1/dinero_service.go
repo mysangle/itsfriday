@@ -18,6 +18,12 @@ type DineroServiceServer interface {
 	UpdateDineroCaterory(echo.Context) error
 	ListDineroCaterories(echo.Context) error
 	DeleteDineroCaterory(echo.Context) error
+
+	CreateDineroExpense(echo.Context) error
+	UpdateDineroExpense(echo.Context) error
+	ListDineroExpenses(echo.Context) error
+	DeleteDineroExpense(echo.Context) error
+	ReportDinero(echo.Context) error
 }
 
 type CreateDineroCategoryRequest struct {
@@ -35,13 +41,40 @@ type DeleteDineroCategoryRequest struct {
 }
 
 type DineroCategory struct {
-	ID       int32       `json:"id"`
-	Name     string      `json:"name"`
-	Priority int32       `json:"priority"`
+	ID       int32      `json:"id"`
+	Name     string     `json:"name"`
+	Priority int32      `json:"priority"`
 }
 
 type DineroCategories struct {
 	Categories []*DineroCategory    `json:"categories"`
+}
+
+type CreateDineroExpenseRequest struct {
+	CategoryID int32     `json:"categoryId"`
+	DateUsed   string    `json:"dateUsed"`
+	Item       string    `json:"item"`
+	Price      int32     `json:"price"`
+}
+
+type UpdateDineroExpenseRequest struct {
+	CategoryID int32     `json:"id"`
+	DateUsed   string    `json:"dateUsed"`
+	Item       string    `json:"item"`
+	Price      int32     `json:"price"`
+}
+
+type DineroExpense struct {
+	ID         int32     `json:"id"`
+
+	CategoryID int32     `json:"categoryId"`
+	DateUsed   string    `json:"dateUsed"`
+	Item       string    `json:"item"`
+	Price      int32     `json:"price"`
+}
+
+type DineroExpenses struct {
+	Expenses []*DineroExpense    `json:"expenses"`
 }
 
 func (s *APIV1Service) CreateDineroCaterory(c echo.Context) error {
@@ -111,7 +144,7 @@ func (s *APIV1Service) UpdateDineroCaterory(c echo.Context) error {
 	}
 
 	category, err := s.Store.GetDineroCategory(ctx, &store.FindDineroCategory{
-		ID:     categoryId,
+		ID:     &categoryId,
 		UserID: &userID,
 	})
 	if err != nil {
@@ -135,7 +168,6 @@ func (s *APIV1Service) UpdateDineroCaterory(c echo.Context) error {
 
 	update := &store.UpdateDineroCategory{
 		ID:     categoryId,
-		UserID: category.UserID,
 	}
 	if request.Name != "" {
 		update.Name = &request.Name
@@ -211,7 +243,7 @@ func (s *APIV1Service) DeleteDineroCaterory(c echo.Context) error {
 	}
 	
 	category, err := s.Store.GetDineroCategory(ctx, &store.FindDineroCategory{
-		ID:     categoryId,
+		ID:     &categoryId,
 		UserID: &userID,
 	})
 	if err != nil {
@@ -238,18 +270,244 @@ func (s *APIV1Service) DeleteDineroCaterory(c echo.Context) error {
 	}); err != nil {
 		return c.JSON(http.StatusNotFound, &ErrorResponse{
 			Code:    Internal,
-			Message: fmt.Sprintf("failed to delete book: %v", err),
+			Message: fmt.Sprintf("failed to delete category: %v", err),
 		})
 	}
 
 	return c.NoContent(http.StatusNoContent)
 }
 
+func (s *APIV1Service) CreateDineroExpense(c echo.Context) error {
+    ctx := c.Request().Context()
+    request := new(CreateDineroExpenseRequest)
+	if err := c.Bind(request); err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+		    Message: fmt.Sprintf("invalid creating expense request: %v", err),
+		})
+	}
+	userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+
+    create := &store.DineroExpense{
+		UserID:      userID,
+		CategoryID:  request.CategoryID,
+		DateUsed:    request.DateUsed,
+		Item:        request.Item,
+		Price:       request.Price,
+	}
+	category, err := s.Store.CreateDineroExpense(ctx, create)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &ErrorResponse{
+			Code:    Internal,
+		    Message: fmt.Sprintf("failed to create dinero category: %v", err),
+		})
+	}
+
+	categoryInfo := convertExpenseFromStore(category)
+	return c.JSON(http.StatusOK, categoryInfo)
+}
+
+func (s *APIV1Service) UpdateDineroExpense(c echo.Context) error {
+    ctx := c.Request().Context()
+	id := c.Param("id")
+	slog.Debug("GetExpense: ", "id", id)
+	expenseId, err := util.ConvertStringToInt32(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get expense_id from url",
+		})
+	}
+	request := new(UpdateDineroExpenseRequest)
+	if err := c.Bind(request); err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+		    Message: fmt.Sprintf("invalid update dinero expense request: %v", err),
+		})
+	}
+	userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+
+	expense, err := s.Store.GetDineroExpense(ctx, &store.FindDineroExpense{
+		ID:     &expenseId,
+		UserID: &userID,
+	})
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get dinero expense: %v", err),
+		})
+	}
+	if expense == nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    NotFound,
+			Message: "expense not found",
+		})
+	}
+	if expense.UserID != userID {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    PermissionDenied,
+			Message: "permission denied",
+		})
+	}
+
+	update := &store.UpdateDineroExpense{
+		ID:     expenseId,
+	}
+	if request.CategoryID != 0 {
+		update.CategoryID = &request.CategoryID
+	}
+	if request.DateUsed != "" {
+		update.DateUsed = &request.DateUsed
+	}
+	if request.Item != "" {
+		update.Item = &request.Item
+	}
+	if request.Price != 0 {
+		update.Price = &request.Price
+	}
+	updatedExpense, err := s.Store.UpdateDineroExpense(ctx, update)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to update dinero expense: %v", err),
+		})
+	}
+
+	categoryInfo := convertExpenseFromStore(updatedExpense)
+	return c.JSON(http.StatusOK, categoryInfo)
+}
+
+func (s *APIV1Service) DeleteDineroExpense(c echo.Context) error {
+    ctx := c.Request().Context()
+	id := c.Param("id")
+	slog.Debug("GetExpense: ", "id", id)
+	expenseId, err := util.ConvertStringToInt32(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get expense_id from url",
+		})
+	}
+    userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+	
+	expense, err := s.Store.GetDineroExpense(ctx, &store.FindDineroExpense{
+		ID:     &expenseId,
+		UserID: &userID,
+	})
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get expense: %v", err),
+		})
+	}
+	if expense == nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    NotFound,
+			Message: "category not found",
+		})
+	}
+	if expense.UserID != userID {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    PermissionDenied,
+			Message: "permission denied",
+		})
+	}
+
+	if err := s.Store.DeleteDineroExpense(ctx, &store.DeleteDineroExpense{
+		ID:   expense.ID,
+	}); err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to delete expense: %v", err),
+		})
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func (s *APIV1Service) ListDineroExpenses(c echo.Context) error {
+    ctx := c.Request().Context()
+	year, err := util.GetYearFromQueryParam(c.QueryParam("year"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: fmt.Sprintf("invalid query param: %v", err),
+		})
+	}
+	month, err := util.GetMonthFromQueryParam(c.QueryParam("month"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: fmt.Sprintf("invalid query param: %v", err),
+		})
+	}
+	slog.Debug("ListDineroExpenses: ", "year", year, "month", month)
+	userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+
+	expenses, err := s.Store.ListDineroExpenses(ctx, &store.FindDineroExpense{
+		UserID: &userID,
+		Year:   &year,
+		Month:  &month,
+	})
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get dinero expenses: %v", err),
+		})
+	}
+
+	list := make([]*DineroExpense, 0)
+	for _, expense := range expenses {
+		expenseInfo := convertExpenseFromStore(expense)
+		list = append(list, expenseInfo)
+	}
+	return c.JSON(http.StatusOK, &DineroExpenses{Expenses: list})
+}
+
+func (s *APIV1Service) ReportDinero(c echo.Context) error {
+    return c.NoContent(http.StatusNoContent)
+}
+
 func convertCategoryFromStore(category *store.DineroCategory) *DineroCategory {
-	bookInfo := &DineroCategory{
+	categoryInfo := &DineroCategory{
 		ID:          category.ID,
 		Name:        category.Name,
 		Priority:    category.Priority,
 	}
-	return bookInfo
+	return categoryInfo
+}
+
+func convertExpenseFromStore(category *store.DineroExpense) *DineroExpense {
+	expenseInfo := &DineroExpense{
+		ID:          category.ID,
+		CategoryID:  category.CategoryID,
+		DateUsed:    category.DateUsed,
+		Item:        category.Item,
+		Price:       category.Price,
+	}
+	return expenseInfo
 }

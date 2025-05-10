@@ -212,7 +212,7 @@ Content-Type: application/json
 
 ###
 
-GET {{server}}/v1/libro/reads?year=2024
+GET {{server}}/v1/libro/reads?year=2025
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
@@ -240,8 +240,8 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-    "name": "고정지출",
-    "priority": 1
+  "name": "고정지출4",
+  "priority": 1
 }
 
 ###
@@ -255,7 +255,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-    "priority": 2
+  "priority": 2
 }
 
 ###
@@ -272,4 +272,47 @@ Content-Type: application/json
 
 ###
 
+# @name expense
+POST {{server}}/v1/dinero/expenses
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
 
+{
+  "categoryId": {{dineroCategoryId}},
+  "dateUsed": "2025-06-01",
+  "item": "점심",
+  "price": 10000
+}
+
+###
+
+@expenseId = {{expense.response.body.id}}
+
+###
+
+PUT {{server}}/v1/dinero/expenses/{{expenseId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "price": 12000
+}
+
+###
+
+GET {{server}}/v1/dinero/expenses?year=2025&month=6
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+###
+
+DELETE {{server}}/v1/dinero/expenses/{{expenseId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+
+###
+
+GET {{server}}/v1/dinero/report?year=2025&month=5
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json

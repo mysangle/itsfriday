@@ -289,13 +289,13 @@ func (d *DB) DeleteBookReview(ctx context.Context, delete *store.DeleteBookRevie
 	return nil
 }
 
-func (d *DB) ListBooksReadInYear(ctx context.Context, userID int32, year string) ([]*store.BookRead, error) {
+func (d *DB) ListBooksReadInYear(ctx context.Context, userID int32, year int32) ([]*store.BookRead, error) {
     where, args := []string{"1 = 1"}, []any{}
 
 	where, args = append(where, "`book_review`.`user_id` = ?"), append(args, userID)
-	start := fmt.Sprintf("%s-01-01", year)
+	start := fmt.Sprintf("%04d-01-01", year)
 	where, args = append(where, "`book_review`.`date_read` >= ?"), append(args, start)
-	end := fmt.Sprintf("%s-12-31", year)
+	end := fmt.Sprintf("%04d-12-31", year)
 	where, args = append(where, "`book_review`.`date_read` <= ?"), append(args, end)
 
 	orderBy := []string{"date_read ASC"}

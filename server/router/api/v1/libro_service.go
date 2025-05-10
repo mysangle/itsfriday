@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/labstack/echo/v4"
 
@@ -571,23 +569,12 @@ func (s *APIV1Service) Dashboard(c echo.Context) error {
 
 func (s *APIV1Service) ReadBook(c echo.Context) error {
 	ctx := c.Request().Context()
-	year := c.QueryParam("year")
-	if year == "" {
-		year = strconv.Itoa(time.Now().Year()) // this year
-	} else {
-		if len(year) != 4 {
-			return c.JSON(http.StatusBadRequest, &ErrorResponse{
-				Code:    InvalidRequest,
-				Message: "invalid year in query param",
-			})
-		}
-		_, err := util.ConvertStringToInt32(year)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, &ErrorResponse{
-				Code:    InvalidRequest,
-				Message: "invalid year in query param",
-			})
-		}
+	year, err := util.GetYearFromQueryParam(c.QueryParam("year"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: fmt.Sprintf("invalid query param: %v", err),
+		})
 	}
 	slog.Debug("ReadBook: ", "year", year)
 
