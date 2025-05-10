@@ -136,14 +136,24 @@ func (s *APIV1Service) Login(c echo.Context) error {
 		})
 	}
 
-	accessToken, err := s.doSignIn(ctx, user, time.Now().Add(AccessTokenDuration))
+	expireTime := time.Now().Add(AccessTokenDuration)
+	accessToken, err := s.doSignIn(ctx, user, expireTime)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, &ErrorResponse{
 			Code:    Unauthenticated,
 		    Message: fmt.Sprintf("failed to log in: %v", err),
 		})
 	}
-
+	
+	origin := c.Request().Header.Get("Origin")
+	cookie, err := s.buildAccessTokenCookie(accessToken, origin, expireTime)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &ErrorResponse{
+			Code:    InvalidRequest,
+		    Message: fmt.Sprintf("failed to build access token cookie, error: %v", err),
+		})
+	}
+	c.Response().Header().Add("Set-Cookie", cookie)
 	return c.JSON(http.StatusOK, &AccessTokenInfo{
 		AccessToken: accessToken,
 	})
@@ -191,6 +201,13 @@ func (s *APIV1Service) Logout(c echo.Context) error {
 		}
 	}
 
+	if err := s.clearAccessTokenCookie(c); err != nil {
+		return c.JSON(http.StatusInternalServerError, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to set cookie: %v", err),
+		})
+	}
+	
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -205,4 +222,36 @@ func (s *APIV1Service) doSignIn(ctx context.Context, user *store.User, expireTim
 	}
 
 	return accessToken, nil
+}
+
+func (s *APIV1Service) clearAccessTokenCookie(c echo.Context) error {
+	cookie, err := s.buildAccessTokenCookie("", "", time.Time{})
+	if err != nil {
+		return fmt.Errorf("failed to build access token cookie: %v", err)
+	}
+
+	c.Response().Header().Add("Set-Cookie", cookie)
+	return nil
+}
+
+func (*APIV1Service) buildAccessTokenCookie(accessToken string, origin string, expireTime time.Time) (string, error) {
+	attrs := []string{
+		fmt.Sprintf("%s=%s", AccessTokenCookieName, accessToken),
+		"Path=/",
+		"HttpOnly",
+	}
+	if expireTime.IsZero() {
+		attrs = append(attrs, "Expires=Thu, 01 Jan 1970 00:00:00 GMT")
+	} else {
+		attrs = append(attrs, "Expires="+expireTime.Format(time.RFC1123))
+	}
+
+	isHTTPS := strings.HasPrefix(origin, "https://")
+	if isHTTPS {
+		attrs = append(attrs, "SameSite=None")
+		attrs = append(attrs, "Secure")
+	} else {
+		attrs = append(attrs, "SameSite=Strict")
+	}
+	return strings.Join(attrs, "; "), nil
 }

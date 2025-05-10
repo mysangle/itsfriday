@@ -62,12 +62,18 @@ func NewServer(ctx context.Context, profile *profile.Profile, store *store.Store
 			return nil
 		},
 	}))
-	authHandler := apiv1.NewAuthHandler(store, secret)
+	authHandler := apiv1.NewAuthHandler(store, secret, "user")
 	echoServer.Use(echojwt.WithConfig(echojwt.Config{
+		ContextKey: authHandler.ContextKey,
 		ContinueOnIgnoredError: true,
 		ParseTokenFunc: authHandler.ParseTokenFunc,
 		ErrorHandler: authHandler.ErrorHandler,
 	  }))
+	  echoServer.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+        AllowOrigins:     []string{fmt.Sprintf("http://localhost:%s", profile.Port)},
+        AllowMethods:     []string{http.MethodGet, http.MethodPost},
+        AllowCredentials: true,
+    }))
 	s.echoServer = echoServer
 
 	echoServer.GET("/monitor/health", func(c echo.Context) error {

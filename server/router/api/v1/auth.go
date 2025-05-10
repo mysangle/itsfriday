@@ -12,6 +12,7 @@ const (
 	KeyID = "v1"
 	AccessTokenAudienceName = "user"
 	AccessTokenDuration     = 7 * 24 * time.Hour
+	AccessTokenCookieName = "itsfriday.access-token"
 )
 
 type ClaimsMessage struct {

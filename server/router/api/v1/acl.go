@@ -21,14 +21,16 @@ const (
 )
 
 type authHandler struct {
-	Store  *store.Store
-	secret string
+	Store      *store.Store
+	secret     string
+	ContextKey string
 }
 
-func NewAuthHandler(store *store.Store, secret string) *authHandler {
+func NewAuthHandler(store *store.Store, secret string, contextKey string) *authHandler {
 	return &authHandler{
 		Store:  store,
 		secret: secret,
+		ContextKey: contextKey,
 	}
 }
 
@@ -38,7 +40,22 @@ func (ai *authHandler) ErrorHandler(c echo.Context, err error) error {
 	if isUnauthorizeAllowedMethod(path) {
 		return nil
 	}
-	return err
+
+	if e, ok := err.(*echojwt.TokenParsingError); ok {
+		return e
+	}
+
+	cookie, cookieErr := c.Cookie(AccessTokenCookieName)
+    if cookieErr != nil {
+		// show error from authorization header if both authorization header and cookie header do not exist
+        return err
+    }
+	token, err := ai.ParseTokenFunc(c, cookie.Value)
+	if err != nil {
+		return err
+	}
+	c.Set(ai.ContextKey, token)
+	return nil
 }
 
 func (ai *authHandler) ParseTokenFunc(c echo.Context, auth string) (interface{}, error) {
