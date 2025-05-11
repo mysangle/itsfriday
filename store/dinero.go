@@ -63,6 +63,11 @@ type DeleteDineroExpense struct {
     ID          int32
 }
 
+type TotalCostPerCategory struct {
+    Name        string
+	Cost        int32
+}
+
 func (s *Store) CreateDineroCaterory(ctx context.Context, create *DineroCategory) (*DineroCategory, error) {
     category, err := s.driver.CreateDineroCategory(ctx, create)
 	if err != nil {
@@ -144,12 +149,12 @@ func (s *Store) ListDineroExpenses(ctx context.Context, find *FindDineroExpense)
 }
 
 func (s *Store) UpdateDineroExpense(ctx context.Context, update *UpdateDineroExpense) (*DineroExpense, error) {
-    category, err := s.driver.UpdateDineroExpense(ctx, update)
+    expense, err := s.driver.UpdateDineroExpense(ctx, update)
 	if err != nil {
 		return nil, err
 	}
 
-	return category, nil
+	return expense, nil
 }
 
 func (s *Store) DeleteDineroExpense(ctx context.Context, delete *DeleteDineroExpense) error {
@@ -159,4 +164,13 @@ func (s *Store) DeleteDineroExpense(ctx context.Context, delete *DeleteDineroExp
 	}
 
 	return nil
+}
+
+func (s *Store) GetTotalCostByCategory(ctx context.Context, find *FindDineroExpense) ([]*TotalCostPerCategory, error) {
+	totalCostByCategory, err := s.driver.GetTotalCostByCategory(ctx, find)
+	if err != nil {
+		return nil, err
+	}
+
+	return totalCostByCategory, nil
 }

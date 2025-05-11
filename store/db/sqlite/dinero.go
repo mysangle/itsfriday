@@ -160,7 +160,6 @@ func (d *DB) ListDineroExpenses(ctx context.Context, find *store.FindDineroExpen
 			created_ts
 		FROM expense
 		WHERE ` + strings.Join(where, " AND ") + ` ORDER BY ` + strings.Join(orderBy, ", ")
-	println(query)
 
 	rows, err := d.db.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -241,4 +240,52 @@ func (d *DB) DeleteDineroExpense(ctx context.Context, delete *store.DeleteDinero
 		return err
 	}
 	return nil
+}
+
+func (d *DB) GetTotalCostByCategory(ctx context.Context, find *store.FindDineroExpense) ([]*store.TotalCostPerCategory, error) {
+	where, args := []string{"1 = 1"}, []any{}
+	if v := find.UserID; v != nil {
+		where, args = append(where, "`expense`.`user_id` = ?"), append(args, *v)
+	}
+	if find.Year != nil && find.Month != nil {
+		start := fmt.Sprintf("%04d-%02d-01", *find.Year, *find.Month)
+		where, args = append(where, "`expense`.`date_used` >= ?"), append(args, start)
+		end := fmt.Sprintf("%04d-%02d-01", *find.Year, *find.Month + 1)
+		where, args = append(where, "`expense`.`date_used` < ?"), append(args, end)
+	}
+
+	orderBy := []string{"`expense_category`.`priority` ASC"}
+	fields := []string{
+		"`expense_category`.`name` AS `name`",
+		"sum(`expense`.`price`) AS `cost`",
+	}
+	query := "SELECT " + strings.Join(fields, ", ") + "FROM `expense` " +
+		" LEFT JOIN `expense_category` ON `expense`.`category_id` = `expense_category`.`id`" +
+		" WHERE " + strings.Join(where, " AND ") + " " +
+		" GROUP BY `expense`.`category_id`" +
+		" ORDER BY " + strings.Join(orderBy, ", ")
+
+	rows, err := d.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	list := make([]*store.TotalCostPerCategory, 0)
+	for rows.Next() {
+		var totalCost store.TotalCostPerCategory
+		if err := rows.Scan(
+			&totalCost.Name,
+			&totalCost.Cost,
+		); err != nil {
+			return nil, err
+		}
+		list = append(list, &totalCost)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }

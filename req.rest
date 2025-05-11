@@ -279,7 +279,7 @@ Content-Type: application/json
 
 {
   "categoryId": {{dineroCategoryId}},
-  "dateUsed": "2025-06-01",
+  "dateUsed": "2025-05-07",
   "item": "점심",
   "price": 10000
 }
@@ -300,7 +300,7 @@ Content-Type: application/json
 
 ###
 
-GET {{server}}/v1/dinero/expenses?year=2025&month=6
+GET {{server}}/v1/dinero/expenses?year=2025&month=5
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 

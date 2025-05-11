@@ -45,4 +45,5 @@ type Driver interface {
 	UpdateDineroExpense(ctx context.Context, update *UpdateDineroExpense) (*DineroExpense, error)
 	ListDineroExpenses(ctx context.Context, find *FindDineroExpense) ([]*DineroExpense, error)
 	DeleteDineroExpense(ctx context.Context, delete *DeleteDineroExpense) error
+	GetTotalCostByCategory(ctx context.Context, find *FindDineroExpense) ([]*TotalCostPerCategory, error)
 }

@@ -74,7 +74,23 @@ type DineroExpense struct {
 }
 
 type DineroExpenses struct {
-	Expenses []*DineroExpense    `json:"expenses"`
+	Expenses   []*DineroExpense       `json:"expenses"`
+}
+
+type DineroReport struct {
+    Reports    []*DineroMonthlyReport `json:"reports"`
+}
+
+type DineroMonthlyReport struct {
+	Date             string                    `json:"date"`
+	TotalCost        int32                     `json:"totalCost"`
+	CategoryCosts    []*DineroCategoryReport   `json:"categoryCosts"`
+	Expenses         []*DineroExpense          `json:"expenses"`
+}
+
+type DineroCategoryReport struct {
+	Name             string                    `json:"name"`
+	Cost             int32                     `json:"cost"`
 }
 
 func (s *APIV1Service) CreateDineroCaterory(c echo.Context) error {
@@ -489,7 +505,77 @@ func (s *APIV1Service) ListDineroExpenses(c echo.Context) error {
 }
 
 func (s *APIV1Service) ReportDinero(c echo.Context) error {
-    return c.NoContent(http.StatusNoContent)
+	ctx := c.Request().Context()
+	year, err := util.GetYearFromQueryParam(c.QueryParam("year"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: fmt.Sprintf("invalid query param: %v", err),
+		})
+	}
+	month, err := util.GetMonthFromQueryParam(c.QueryParam("month"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: fmt.Sprintf("invalid query param: %v", err),
+		})
+	}
+	slog.Debug("ReportDinero: ", "year", year, "month", month)
+	userID, ok := c.Get(useridContextKey).(int32)
+	if !ok {
+	    return c.JSON(http.StatusBadRequest, &ErrorResponse{
+			Code:    InvalidRequest,
+			Message: "failed to get userid from access token",
+		})
+	}
+
+	totalCostByCategory, err := s.Store.GetTotalCostByCategory(ctx, &store.FindDineroExpense{
+		UserID: &userID,
+		Year:   &year,
+		Month:  &month,
+	})
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get dinero total cost by category: %v", err),
+		})
+	}
+
+	expenses, err := s.Store.ListDineroExpenses(ctx, &store.FindDineroExpense{
+		UserID: &userID,
+		Year:   &year,
+		Month:  &month,
+	})
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &ErrorResponse{
+			Code:    Internal,
+			Message: fmt.Sprintf("failed to get dinero expenses: %v", err),
+		})
+	}
+
+	var totalMonthlyCost int32
+	totalCostByCategoryList := make([]*DineroCategoryReport, 0)
+	for _, totalCost := range totalCostByCategory {
+		totalCostInfo := convertTotalCostFromStore(totalCost)
+		totalMonthlyCost = totalMonthlyCost + totalCostInfo.Cost
+		totalCostByCategoryList = append(totalCostByCategoryList, totalCostInfo)
+	}
+	
+	expenseList := make([]*DineroExpense, 0)
+	for _, expense := range expenses {
+		expenseInfo := convertExpenseFromStore(expense)
+		expenseList = append(expenseList, expenseInfo)
+	}
+	report := &DineroMonthlyReport{
+		Date:          fmt.Sprintf("%04d-%02d", year, month),
+		TotalCost:     totalMonthlyCost,
+		CategoryCosts: totalCostByCategoryList,
+		Expenses:      expenseList,
+	}
+	reports := make([]*DineroMonthlyReport, 0)
+	reports = append(reports, report)
+
+    return c.JSON(http.StatusOK, &DineroReport{Reports: reports})
 }
 
 func convertCategoryFromStore(category *store.DineroCategory) *DineroCategory {
@@ -510,4 +596,12 @@ func convertExpenseFromStore(category *store.DineroExpense) *DineroExpense {
 		Price:       category.Price,
 	}
 	return expenseInfo
+}
+
+func convertTotalCostFromStore(totalCost *store.TotalCostPerCategory) *DineroCategoryReport {
+	totalCostInfo := &DineroCategoryReport{
+		Name:  totalCost.Name,
+		Cost:  totalCost.Cost,
+	}
+	return totalCostInfo
 }
