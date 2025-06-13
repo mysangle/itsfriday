@@ -1,18 +1,6 @@
 import { StrictMode } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Layout } from './layout';
-
-const Dashboard = () => <h1>Dashboard</h1>;
-
-const router = createBrowserRouter([
-  {
-    path: 'dashboard',
-    element: <Layout />,
-    children: [
-      { path: '', element: <Dashboard /> },
-    ]
-  }
-]);
+import { RouterProvider } from 'react-router-dom';
+import router from "@/router";
 
 export const App = () => {
   return (
@@ -22,7 +10,4 @@ export const App = () => {
   );
 };
 
-
-
-
-
+export default App;

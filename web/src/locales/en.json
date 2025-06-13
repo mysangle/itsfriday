@@ -1,0 +1,9 @@
+{
+  "common": {
+    "log-in": "Log in",
+    "log-out": "Log out",
+    "password": "Password",
+    "username": "Username",
+    "sign-up": "Sign up"
+  }
+}

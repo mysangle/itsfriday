@@ -38,6 +38,7 @@ func NewServer(ctx context.Context, profile *profile.Profile, store *store.Store
 	echoServer.Debug = true
 	echoServer.HideBanner = true
 	echoServer.HidePort = true
+	
 	echoServer.Use(middleware.Recover())
 	echoServer.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogStatus:   true,
@@ -62,6 +63,11 @@ func NewServer(ctx context.Context, profile *profile.Profile, store *store.Store
 			return nil
 		},
 	}))
+	echoServer.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+        AllowOrigins:     []string{"http://localhost:4321"},
+        AllowMethods:     []string{http.MethodGet, http.MethodPost},
+        AllowCredentials: true,
+    }))
 	authHandler := apiv1.NewAuthHandler(store, secret, "user")
 	echoServer.Use(echojwt.WithConfig(echojwt.Config{
 		ContextKey: authHandler.ContextKey,
@@ -69,11 +75,7 @@ func NewServer(ctx context.Context, profile *profile.Profile, store *store.Store
 		ParseTokenFunc: authHandler.ParseTokenFunc,
 		ErrorHandler: authHandler.ErrorHandler,
 	  }))
-	  echoServer.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-        AllowOrigins:     []string{fmt.Sprintf("http://localhost:%s", profile.Port)},
-        AllowMethods:     []string{http.MethodGet, http.MethodPost},
-        AllowCredentials: true,
-    }))
+	
 	s.echoServer = echoServer
 
 	echoServer.GET("/monitor/health", func(c echo.Context) error {

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"log/slog"
 	"errors"
 	"fmt"
 
@@ -48,6 +49,7 @@ func (ai *authHandler) ErrorHandler(c echo.Context, err error) error {
 	cookie, cookieErr := c.Cookie(AccessTokenCookieName)
     if cookieErr != nil {
 		// show error from authorization header if both authorization header and cookie header do not exist
+		slog.Error("failed to get access token", "error", err)
         return err
     }
 	token, err := ai.ParseTokenFunc(c, cookie.Value)

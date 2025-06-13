@@ -251,7 +251,12 @@ func (*APIV1Service) buildAccessTokenCookie(accessToken string, origin string, e
 		attrs = append(attrs, "SameSite=None")
 		attrs = append(attrs, "Secure")
 	} else {
-		attrs = append(attrs, "SameSite=Strict")
+		if strings.HasPrefix(origin, "http://localhost") {
+			attrs = append(attrs, "SameSite=None")
+		    attrs = append(attrs, "Secure")
+		} else {
+            attrs = append(attrs, "SameSite=Strict")
+		}	
 	}
 	return strings.Join(attrs, "; "), nil
 }
