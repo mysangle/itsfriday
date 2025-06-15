@@ -17,7 +17,7 @@ type Profile struct {
 	Port int
 	// Data is the data directory
 	Data string
-	// DSN points to where memos stores its own data
+	// DSN points to where itsfriday stores its own data
 	DSN string
 	// Driver is the database driver: sqlite
 	Driver string

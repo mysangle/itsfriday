@@ -259,13 +259,14 @@ func (d *DB) GetTotalCostByCategory(ctx context.Context, find *store.FindDineroE
 		"`expense_category`.`name` AS `name`",
 		"sum(`expense`.`price`) AS `cost`",
 	}
-	query := "SELECT " + strings.Join(fields, ", ") + "FROM `expense` " +
-		" LEFT JOIN `expense_category` ON `expense`.`category_id` = `expense_category`.`id`" +
+	query := "SELECT " + strings.Join(fields, ", ") + "FROM `expense_category` " +
+		" LEFT JOIN `expense` ON `expense`.`category_id` = `expense_category`.`id`" +
 		" WHERE " + strings.Join(where, " AND ") + " " +
-		" GROUP BY `expense`.`category_id`" +
+		" GROUP BY `expense_category`.`id`" +
 		" ORDER BY " + strings.Join(orderBy, ", ")
 
-	rows, err := d.db.QueryContext(ctx, query, args...)
+	result := append(args, args...)
+	rows, err := d.db.QueryContext(ctx, query, result...)
 	if err != nil {
 		return nil, err
 	}

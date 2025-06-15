@@ -172,5 +172,55 @@ func (s *Store) GetTotalCostByCategory(ctx context.Context, find *FindDineroExpe
 		return nil, err
 	}
 
+	// all of categories
+	categoryList, err := s.driver.ListDineroCategories(ctx, &FindDineroCategory{
+		UserID: find.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return getTotalCostByAllCategories(totalCostByCategory, categoryList)
+}
+
+func getTotalCostByAllCategories(totalCostByCategory []*TotalCostPerCategory, categoryList []*DineroCategory) ([]*TotalCostPerCategory, error) {
+	if len(categoryList) == len(totalCostByCategory) {
+		return totalCostByCategory, nil
+	}
+
+	names := make([]string, 0)
+	for _, item := range totalCostByCategory {
+		names = append(names, item.Name)
+	}
+	allCategoryNames := make([]string, 0)
+	for _, item := range categoryList {
+		allCategoryNames = append(allCategoryNames, item.Name)
+	}
+	diff := getDifference(allCategoryNames, names)
+	for _, item := range diff {
+		totalCostByCategory = append(totalCostByCategory, &TotalCostPerCategory{
+			Name: item,
+			Cost: 0,
+		})
+	}
+
 	return totalCostByCategory, nil
+}
+
+func getDifference(a, b []string) []string {
+    // add all elements of B to the map
+    bMap := make(map[string]bool)
+    for _, item := range b {
+        bMap[item] = true
+    }
+    
+    // extract elements that exist only in A
+    var diff []string
+    for _, item := range a {
+        if _, exists := bMap[item]; !exists {
+            diff = append(diff, item)
+        }
+    }
+    
+    return diff
 }

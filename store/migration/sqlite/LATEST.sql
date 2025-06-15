@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS user_setting (
   UNIQUE(user_id, key)
 );
 
--- libro service --
+-- LIBERO service --
 
 -- book
 CREATE TABLE IF NOT EXISTS book (
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS book_review (
 CREATE INDEX IF NOT EXISTS idx_book_review_user_id_date_read ON book_review (user_id, date_read);
 CREATE INDEX IF NOT EXISTS idx_book_review_book_id_date_read ON book_review (book_id, date_read);
 
--- monero service --
+-- MONERO service --
 
 -- category
 CREATE TABLE IF NOT EXISTS expense_category (
@@ -87,3 +87,30 @@ CREATE TABLE IF NOT EXISTS expense (
 
 CREATE INDEX IF NOT EXISTS idx_expense_user_id ON expense (user_id);
 CREATE INDEX IF NOT EXISTS idx_expense_user_id_category_id_date_used ON expense (user_id, category_id, date_used);
+
+-- monthly expenses
+-- CREATE TABLE IF NOT EXISTS monthly_expense (
+--   user_id INTEGER NOT NULL,
+--   year INTEGER NOT NULL,
+--   month INTEGER NOT NULL,
+--   category_name TEXT NOT NULL,
+--   total_cost INTEGER NOT NULL,
+--   UNIQUE(user_id, year, month)
+-- );
+
+-- CREATE INDEX IF NOT EXISTS idx_monthly_expense_user_id_year ON monthly_expense (user_id, year);
+
+-- EVENTO service --
+
+-- event
+CREATE TABLE IF NOT EXISTS event (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),
+  user_id INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  place TEXT NOT NULL DEFAULT '',
+  start_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now')),
+  end_ts BIGINT NOT NULL DEFAULT (strftime('%s', 'now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_user_id_start_ts ON event (user_id, start_ts);

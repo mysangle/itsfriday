@@ -4,6 +4,9 @@
 |-----------|------------------------------------|
 | Libro     | Book review                        |
 | Dinero    | Asset management(Household ledger) |
+| Evento    | Calendar, Event, Poll              |
+| Math      | Calculation, Currency exchange     |
+| Noto      | Note taking                        |
 | Fitness   | Workout                            |
 | Fediverse | Activity Pub                       |
 
@@ -21,8 +24,8 @@ go run cmd/itsfriday/main.go --data ~/itsfriday/build
 # Dinero
 
 * Expense categories and Expenses
-* Expenses by month(or by year)
-* Expenses per category by month
+* Expenses by month
+* Cost per category by month
 
 # TODO
 
