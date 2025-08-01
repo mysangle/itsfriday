@@ -4,7 +4,7 @@ import './App.css'
 const App = observer(() => {
   return (
     <div>
-      <h1>It's Friday</h1>
+      <h1 className="text-3xl font-bold underline">It's Friday</h1>
     </div>
   );
 });
