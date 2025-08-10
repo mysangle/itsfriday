@@ -1,0 +1,26 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "itsfriday": "It's Friday",
+    "sign-in": "Log in",
+    "sign-out": "Log out",
+    "password": "Password",
+    "username": "Username",
+    "sign-up": "Sign up"
+  },
+  "auth": {
+    "create-your-account": "Create your account",
+    "host-tip": "You are registering as the Site Host.",
+    "new-password": "New password",
+    "repeat-new-password": "Repeat the new password",
+    "sign-in-tip": "Already have an account?",
+    "sign-up-tip": "Don't have an account yet?"
+  },
+  "setting": {
+    "appearance-option": {
+      "dark": "Always dark",
+      "light": "Always light",
+      "system": "Follow system"
+    }
+  }
+}

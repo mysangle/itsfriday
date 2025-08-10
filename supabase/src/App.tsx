@@ -1,12 +1,9 @@
 import { observer } from "mobx-react-lite";
+import { Outlet } from "react-router-dom";
 import './App.css'
 
 const App = observer(() => {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold underline">It's Friday</h1>
-    </div>
-  );
+  return <Outlet />;
 });
 
 export default App
