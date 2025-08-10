@@ -48,7 +48,7 @@ const SignUp = observer(() => {
       actionBtnLoadingState.setLoading();
 
       // create user
-      const { data, error } = await supabaseClient.auth.signUp({
+      const { error: error } = await supabaseClient.auth.signUp({
         email: username,
         password: password,
       })

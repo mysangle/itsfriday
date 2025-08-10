@@ -45,7 +45,7 @@ const PasswordSignInForm = observer(() => {
       actionBtnLoadingState.setLoading();
 
       // sign in
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
+      const { error: error } = await supabaseClient.auth.signInWithPassword({
         email: username,
         password: password,
       })

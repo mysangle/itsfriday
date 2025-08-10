@@ -31,7 +31,7 @@ const Navigation = observer((props: Props) => {
   const navLinks: NavLinkItem[] = [homeNavLink];
 
   return (
-    <div className="w-full px-1 py-4 flex flex-col justify-start items-start space-y-2 overflow-auto overflow-x-hidden hide-scrollbar shrink">
+    <div className={cn("w-full px-1 py-4 flex flex-col justify-start items-start space-y-2 overflow-auto overflow-x-hidden hide-scrollbar shrink", className)}>
       {navLinks.map((navLink) => (
         <NavLink
           className={({ isActive }) =>
