@@ -18,7 +18,7 @@ const RootLayout = observer(() => {
   }, []);
 
   return (
-    <div className="w-full min-h-full flex flex-row justify-center items-start sm:pl-16">
+    <div className="w-full min-h-full flex flex-row justify-center items-start pl-16">
       <div
         className={cn(
             "group flex flex-row justify-between items-center fixed top-0 left-0 right-0 select-none h-16 bg-sidebar",
@@ -35,7 +35,7 @@ const RootLayout = observer(() => {
             "border-r border-border",
           )}
       >
-        <Navigation className="py-4 md:pt-6" />
+        <Navigation className="py-4 pt-6" />
       </div>
       <main className="w-full h-auto grow shrink flex flex-col justify-start items-center">
         <Suspense fallback={<Loading />}>

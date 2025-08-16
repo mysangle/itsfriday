@@ -1,13 +1,4 @@
 {
-  "common": {
-    "dashboard": "Dashboard",
-    "itsfriday": "It's Friday",
-    "sign-in": "Log in",
-    "sign-out": "Log out",
-    "password": "Password",
-    "username": "Username",
-    "sign-up": "Sign up"
-  },
   "auth": {
     "create-your-account": "Create your account",
     "host-tip": "You are registering as the Site Host.",
@@ -15,6 +6,56 @@
     "repeat-new-password": "Repeat the new password",
     "sign-in-tip": "Already have an account?",
     "sign-up-tip": "Don't have an account yet?"
+  },
+  "common": {
+    "basic": "Basic",
+    "book": "book",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "create": "Create",
+    "dashboard": "Dashboard",
+    "delete": "Delete",
+    "delete-warning": "Are you sure to delete '{{title}}'? THIS ACTION IS IRREVERSIBLE",
+    "edit": "Edit",
+    "home": "Home",
+    "itsfriday": "It's Friday",
+    "libro": "Libro",
+    "review": "Review",
+    "sign-in": "Log in",
+    "sign-out": "Log out",
+    "sign-up": "Sign up",
+    "password": "Password",
+    "update": "Update",
+    "username": "Username"
+  },
+  "days": {
+    "fri": "Fri",
+    "mon": "Mon",
+    "sat": "Sat",
+    "sun": "Sun",
+    "thu": "Thu",
+    "tue": "Tue",
+    "wed": "Wed"
+  },
+  "libro": {
+    "author": "Author",
+    "book": "Book",
+    "book-list": "Book List",
+    "create-a-book": "Create a book",
+    "create-a-review": "Create a book review",
+    "date_read": "Date Read",
+    "genre": "Genre",
+    "pages": "Pages",
+    "pub_year": "Publication Year",
+    "rating": "Rating",
+    "review": "Review",
+    "review-list": "Review List",
+    "show-full-data": "Show",
+    "title": "Title",
+    "translator": "Translator"
+  },
+  "message": {
+    "no-data": "No data found."
   },
   "setting": {
     "appearance-option": {

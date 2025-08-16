@@ -1,4 +1,4 @@
-import { LibraryIcon } from "lucide-react";
+import { HouseIcon, LibraryIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { NavLink } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -22,13 +22,19 @@ const Navigation = observer((props: Props) => {
   const t = useTranslate();
 
   const homeNavLink: NavLinkItem = {
-    id: "header-dashboard",
+    id: "header-home",
     path: Routes.ROOT,
-    title: t("common.dashboard"),
+    title: t("common.home"),
+    icon: <HouseIcon className="w-6 h-auto shrink-0" />,
+  };
+  const libroNavLink: NavLinkItem = {
+    id: "header-libro",
+    path: Routes.LIBRO,
+    title: t("common.libro"),
     icon: <LibraryIcon className="w-6 h-auto shrink-0" />,
   };
 
-  const navLinks: NavLinkItem[] = [homeNavLink];
+  const navLinks: NavLinkItem[] = [homeNavLink, libroNavLink];
 
   return (
     <div className={cn("w-full px-1 py-4 flex flex-col justify-start items-start space-y-2 overflow-auto overflow-x-hidden hide-scrollbar shrink", className)}>
