@@ -26,17 +26,21 @@ export const BookReview: MessageFns<BookReview> = {
   },
   fromPartial(object: Partial<BookReview>): BookReview {
     const message = createBaseBookReview();
-    message.id = object.id ?? 0;
     message.title = object.title ?? "";
     message.author = object.author ?? "";
     message.translator = object.translator ?? "";
-    message.pages = object.pages ?? 0;
-    message.pubYear = object.pubYear ?? 0;
+    if (object.pages) {
+      message.pages = object.pages;
+    }
+    if (object.pubYear) {
+      message.pubYear = object.pubYear;
+    }
     message.genre = object.genre ?? "";
-    message.rating = object.rating ?? 0;
+    if (object.rating) {
+      message.rating = object.rating;
+    }
     message.review = object.review ?? "";
     message.dateRead = object.dateRead ?? "";
-    message.createdAt = object.createdAt;
     return message;
   },
 };

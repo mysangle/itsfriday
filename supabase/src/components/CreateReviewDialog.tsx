@@ -42,7 +42,10 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
   };
 
   function isValidDateReadFormat(dateStr: string): boolean {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      console.error(dateStr + "success")
+      return false;
+    }
 
     const [year, month, day] = dateStr.split("-").map(Number);
     const date = new Date(year, month - 1, day);
@@ -97,7 +100,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
       toast.error("Rating should be between 0 and 5");
       return;
     }
-    if (review.dateRead && !isValidDateReadFormat(review.dateRead)) {
+    if (review.dateRead !== undefined && !isValidDateReadFormat(review.dateRead)) {
       toast.error("Date read should be format like '" + defaultDateRead + "'");
       return;
     }
@@ -153,9 +156,10 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
       requestState.setFinish();
       onSuccess?.();
       onOpenChange(false);
+      setReview(BookReview.fromPartial({}));
     } catch (error: any) {
       console.error(error);
-      toast.error(error.details);
+      toast.error(error.message);
       requestState.setError();
     }
   };

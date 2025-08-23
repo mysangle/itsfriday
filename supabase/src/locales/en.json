@@ -45,6 +45,8 @@
     "create-a-review": "Create a book review",
     "date_read": "Date Read",
     "genre": "Genre",
+    "monthly_books_read_count": "monthly books read count",
+    "books_read_count_this_year": "Number of books read this year",
     "pages": "Pages",
     "pub_year": "Publication Year",
     "rating": "Rating",

@@ -37,7 +37,7 @@ const RootLayout = observer(() => {
       >
         <Navigation className="py-4 pt-6" />
       </div>
-      <main className="w-full h-auto grow shrink flex flex-col justify-start items-center">
+      <main className="w-full h-auto grow shrink flex flex-row justify-start items-center">
         <Suspense fallback={<Loading />}>
           <Outlet />
         </Suspense>
