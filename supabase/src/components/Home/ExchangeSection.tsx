@@ -1,12 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { supabaseClient } from "@/store";
-import type { Exchange } from "@/types/model/home_service";
+import { type Exchange, homeStore } from "@/types/model/home_service";
 import { toCamelCase } from "@/utils/common";
 
 const ExchangeSection = observer(() => {
-  const tableName = "exchange";
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
 
   useEffect(() => {
@@ -15,9 +13,7 @@ const ExchangeSection = observer(() => {
 
   const fetchExchanges = async () => {
     try {
-      let { data, error } = await supabaseClient
-        .from(tableName)
-        .select('*')
+      let { data, error } = await homeStore.fetchExchanges();
       if (error != null) {
         throw error;
       }

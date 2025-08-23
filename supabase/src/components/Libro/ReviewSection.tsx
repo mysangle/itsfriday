@@ -5,14 +5,12 @@ import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { useDialog } from "@/hooks/useDialog";
 import CreateReviewDialog from "../CreateReviewDialog";
-import { supabaseClient } from "@/store";
-import type { BookReview } from "@/types/model/libro_service";
+import { type BookReview, libroStore } from "@/types/model/libro_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 const ReviewSection = observer(() => {
-  const tableName = "book_review";
   const t = useTranslate();
   const [reviews, setReviews] = useState<BookReview[]>([]);
   const createDialog = useDialog();
@@ -25,16 +23,13 @@ const ReviewSection = observer(() => {
 
   const fetchReviews = async () => {
     try {
-      let { data: bookReviews, error } = await supabaseClient
-        .from(tableName)
-        .select('*')
-        .order('date_read', { ascending: false })
+      let { data, error } = await libroStore.fetchBookReviews()
       if (error != null) {
         throw error;
       }
 
-      if (bookReviews) {
-        setReviews(bookReviews.map((review) => (toCamelCase(review))))
+      if (data) {
+        setReviews(data.map((review) => (toCamelCase(review))))
       }
     } catch (error: any) {
       console.error(error);
@@ -55,14 +50,13 @@ const ReviewSection = observer(() => {
   const handleDeleteReview = async (review: BookReview) => {
     const confirmed = window.confirm(t("common.delete-warning", { title: review.title }));
     if (confirmed) {
-      let { error } = await supabaseClient
-        .from(tableName)
-        .delete()
-        .eq('id', review.id)
-      if (error != null) {
-        throw error;
+      if (review.id !== undefined) {
+        let { error } = await libroStore.deleteBookReview(review.id)
+        if (error != null) {
+          console.error(error);
+        }
+        fetchReviews();
       }
-      fetchReviews();
     }
   };
 

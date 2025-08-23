@@ -2,57 +2,10 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { toast } from "react-hot-toast";
-import { supabaseClient } from "@/store";
-import type { CountByGenre } from "@/types/model/libro_service";
+import { type CountByGenre, libroStore } from "@/types/model/libro_service";
 import { useTranslate } from "@/utils/i18n";
 
-type TooltipPayload = ReadonlyArray<any>;
-
-type Coordinate = {
-  x: number;
-  y: number;
-};
-
-type PieSectorData = {
-  percent?: number;
-  name?: string | number;
-  midAngle?: number;
-  middleRadius?: number;
-  tooltipPosition?: Coordinate;
-  value?: number;
-  paddingAngle?: number;
-  dataKey?: string;
-  payload?: any;
-  tooltipPayload?: ReadonlyArray<TooltipPayload>;
-};
-
-type GeometrySector = {
-  cx: number;
-  cy: number;
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-};
-
-type PieLabelProps = PieSectorData &
-  GeometrySector & {
-    tooltipPayload?: any;
-  };
-
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: PieLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-  const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-
-  return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-      {`${((percent ?? 1) * 100).toFixed(0)}%`}
-    </text>
-  );
-};
 
 const ChartByGenreSection = observer(() => {
   const t = useTranslate();
@@ -64,13 +17,11 @@ const ChartByGenreSection = observer(() => {
 
   const fetchStatsByGenre = async () => {
     try {
-      let { data, error } = await supabaseClient
-        .rpc('get_genre_12_stats')
+      let { data, error } = await libroStore.fetchStatsByGenre()
       if (error != null) {
         throw error;
       }
 
-      console.error(data)
       if (data != null) {
         setGenreCount(data)
       }
@@ -85,7 +36,7 @@ const ChartByGenreSection = observer(() => {
       <div className="w-full flex flex-col gap-2 pt-4 justify-start items-start">
         <p className="font-medium text-muted-foreground">{t("libro.by-genre")}</p>
         <p className="text-sm text-muted-foreground">
-          {t("libro.books-read-count-this-year-by-genre")}
+          {t("libro.books-read-count-by-genre")}
         </p>
       </div>
       <div className="w-full overflow-x-auto">

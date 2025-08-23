@@ -1,10 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, Rectangle, ResponsiveContainer, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 import { toast } from "react-hot-toast";
 import { Separator } from "@/components/ui/separator";
-import { supabaseClient } from "@/store";
-import type { LibroYearMonthReport } from "@/types/model/home_service";
+import { type LibroYearMonthReport, homeStore } from "@/types/model/home_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 
@@ -47,8 +46,7 @@ const LibroSection = observer(() => {
 
   const fetchThisYearCount = async () => {
     try {
-      let { data, error } = await supabaseClient
-        .rpc('get_this_year_read_count')
+      let { data, error } = await homeStore.fetchBooksReadCountThisYear()
       if (error != null) {
         throw error;
       }
@@ -61,8 +59,7 @@ const LibroSection = observer(() => {
 
   const fetchReports = async () => {
     try {
-      let { data, error } = await supabaseClient
-        .rpc('get_year_month_count_stats')
+      let { data, error } = await homeStore.fetchBooksReadCountByMonth()
       if (error != null) {
         throw error;
       }
