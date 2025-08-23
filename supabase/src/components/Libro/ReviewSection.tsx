@@ -93,10 +93,10 @@ const ReviewSection = observer(() => {
                   {t("libro.author") + " / " + t("libro.translator")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("libro.pub_year")}
+                  {t("libro.pub-year")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("libro.date_read")}
+                  {t("libro.date-read")}
                 </th>
                 <th scope="col" className="relative py-2 pl-3 pr-4"></th>
               </tr>

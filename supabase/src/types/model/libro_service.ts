@@ -1,4 +1,9 @@
 
+export interface CountByGenre {
+  genre: string;
+  count: number;
+}
+
 export interface BookReview {
     id?: number;
     title: string;

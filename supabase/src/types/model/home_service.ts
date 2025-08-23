@@ -1,6 +1,5 @@
 
 export interface LibroYearMonthReport {
-  id: number;
   yearMonth: string;
   count: number;
 }

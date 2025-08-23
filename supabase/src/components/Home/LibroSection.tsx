@@ -38,7 +38,6 @@ const LibroSection = observer(() => {
 
     // 3. create the final array filled with zeros
     const filledData: LibroYearMonthReport[] = months.map(m => ({
-      id: dataMap.get(m)?.id ?? 0,
       yearMonth: m,
       count: dataMap.get(m)?.count ?? 0, // 0 if empty
     }));
@@ -67,8 +66,9 @@ const LibroSection = observer(() => {
       if (error != null) {
         throw error;
       }
-      const filledData = fillEmptyMonths((data as LibroYearMonthReport[]).map((r) => toCamelCase(r)));
-      if (filledData.length !== 0) {
+
+      if (data != null) {
+        const filledData = fillEmptyMonths((data as LibroYearMonthReport[]).map((r) => toCamelCase(r)));
         setReports(filledData);
       }
     } catch (error: any) {
@@ -85,7 +85,7 @@ const LibroSection = observer(() => {
             Libro Report
           </p>
           <p className="text-sm text-muted-foreground">
-            {t("libro.books_read_count_this_year")}: {count}
+            {t("libro.books-read-count-this-year")}: {count}
           </p>
         </div>
       </div>
@@ -105,7 +105,7 @@ const LibroSection = observer(() => {
           <YAxis />
           <Tooltip cursor={false} />
           <Legend />
-          <Bar dataKey="count" name={t("libro.monthly_books_read_count")} fill="#82ca9d" />
+          <Bar dataKey="count" name={t("libro.monthly-books-read-count")} fill="#82ca9d" />
         </BarChart>
       </ResponsiveContainer>
     </div>

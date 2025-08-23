@@ -1,21 +1,24 @@
-import { type LucideIcon, StarIcon } from "lucide-react";
+import { ChartPieIcon, type LucideIcon, StarIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ChartByGenreSection from "@/components/Libro/ChartByGenreSection";
 import ReviewSection from "@/components/Libro/ReviewSection";
 import SectionMenuItem from "@/components/SectionMenuItem";
 import { useTranslate } from "@/utils/i18n";
 
-type SettingSection = "review";
+type SettingSection = "review" | "by-genre";
 
 interface State {
   selectedSection: SettingSection;
 }
 
 const BASIC_SECTIONS: SettingSection[] = ["review"];
+const CHART_SECTIONS: SettingSection[] = ["by-genre"];
 const SECTION_ICON_MAP: Record<SettingSection, LucideIcon> = {
   review: StarIcon,
+  "by-genre": ChartPieIcon,
 };
 
 const Libro = observer(() => {
@@ -25,12 +28,12 @@ const Libro = observer(() => {
     selectedSection: "review",
   });
 
-  const settingsSectionList = [...BASIC_SECTIONS];
+  const settingsSectionList = [...BASIC_SECTIONS, ...CHART_SECTIONS];
 
   useEffect(() => {
     let hash = location.hash.slice(1) as SettingSection;
     // If the hash is not a valid section, redirect to the default section.
-    if (![...BASIC_SECTIONS].includes(hash)) {
+    if (![...BASIC_SECTIONS, ...CHART_SECTIONS].includes(hash)) {
       hash = "review";
     }
     
@@ -59,6 +62,18 @@ const Libro = observer(() => {
               />
             ))}
           </div>
+          <span className="text-sm mt-4 pl-3 font-mono select-none text-muted-foreground">{t("common.chart")}</span>
+          <div className="w-full flex flex-col justify-start items-start mt-1">
+            {CHART_SECTIONS.map((item) => (
+              <SectionMenuItem
+                key={item}
+                text={t(`libro.${item}`)}
+                icon={SECTION_ICON_MAP[item]}
+                isSelected={state.selectedSection === item}
+                onClick={() => handleSectionSelectorItemClick(item)}
+              />
+            ))}
+          </div>
         </div>
         <div className="w-full grow pl-4 overflow-x-auto">
           <div className="w-auto my-2 hidden">
@@ -77,7 +92,9 @@ const Libro = observer(() => {
           </div>
           {state.selectedSection === "review" ? (
             <ReviewSection />
-          ) : null}
+          ) : state.selectedSection === "by-genre" ? (
+              <ChartByGenreSection />
+            ) : null}
         </div>
       </div>
     </section>
