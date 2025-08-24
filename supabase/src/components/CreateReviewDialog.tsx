@@ -227,7 +227,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="pub_year">{t("libro.pub_year")}</Label>
+            <Label htmlFor="pub_year">{t("libro.pub-year")}</Label>
             <Input
               id="pub_year"
               type="text"
@@ -279,7 +279,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="date_read">{t("libro.date_read") + "(format: " + defaultDateRead + ")"}</Label>
+            <Label htmlFor="date_read">{t("libro.date-read") + "(format: " + defaultDateRead + ")"}</Label>
             <Input
               id="date_read"
               type="text"
