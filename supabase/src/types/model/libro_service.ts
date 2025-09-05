@@ -58,6 +58,21 @@ export interface MessageFns<T> {
 }
 
 const libroStore = (() => {
+  const insertReview = async (review: any) => {
+    const { error } = await supabaseClient
+      .from("book_review")
+      .insert([review])
+    return { error: error != null ? toItsError(error) : null };
+  };
+
+  const updateReview = async (id: number, updatedReview: any) => {
+    const { error } = await supabaseClient
+      .from("book_review")
+      .update(updatedReview)
+      .eq('id', id)
+    return { error: error != null ? toItsError(error) : null };
+  }
+
   const fetchBookReviews = async () => {
     let { data, error } = await supabaseClient
       .from("book_review")
@@ -81,6 +96,8 @@ const libroStore = (() => {
   };
 
   return {
+    insertReview,
+    updateReview,
     fetchBookReviews,
     deleteBookReview,
     fetchStatsByGenre,

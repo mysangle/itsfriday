@@ -5,8 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useLoading from "@/hooks/useLoading";
-import { supabaseClient } from "@/store";
-import { BookReview } from "@/types/model/libro_service";
+import { BookReview, libroStore } from "@/types/model/libro_service";
 import { toSnakeCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 
@@ -108,9 +107,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
     try {
       requestState.setLoading();
       if (isCreating) {
-        const { error } = await supabaseClient
-          .from(tableName)
-          .insert([toSnakeCase(review)])
+        const { error } = await libroStore.insertReview(toSnakeCase(review))
         if (error != null) {
           throw error;
         }
@@ -144,14 +141,14 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
         if (review.dateRead !== initialReview?.dateRead) {
           updateReview.dateRead = review.dateRead;
         }
-        const { error } = await supabaseClient
-          .from(tableName)
-          .update(toSnakeCase(updateReview))
-          .eq('id', review.id)
-        if (error != null) {
-          throw error;
+        if (review.id !== undefined) {
+          const { error } = await libroStore.updateReview(review.id, toSnakeCase(updateReview))
+          if (error != null) {
+            throw error;
+          }
+          toast.success("Update book review successfully");
         }
-        toast.success("Update book review successfully");
+        
       }
       requestState.setFinish();
       onSuccess?.();
