@@ -6,6 +6,12 @@ export interface LibroYearMonthReport {
   count: number;
 }
 
+export interface MoneroYearMonthCategoryReport {
+  yearMonth: string;
+  categoryId: number;
+  price: number;
+}
+
 export interface Exchange {
   id?: number;
   from: string;
@@ -35,10 +41,24 @@ const homeStore = (() => {
     return { data, error: error != null ? toItsError(error) : null }
   };
 
+  const fetchTotalExpensesThisYear = async () => {
+    let { data, error } = await supabaseClient
+        .rpc('stats_expense_this_year_total_price')
+    return { data, error: error != null ? toItsError(error) : null }
+  }
+
+  const fetchPricesByMonthAndCategory = async () => {
+    let { data, error } = await supabaseClient
+        .rpc('stats_expense_year_month_price')
+    return { data, error: error != null ? toItsError(error) : null }
+  };
+
   return {
     fetchExchanges,
     fetchBooksReadCountThisYear,
     fetchBooksReadCountByMonth,
+    fetchTotalExpensesThisYear,
+    fetchPricesByMonthAndCategory,
   };
 })();
 

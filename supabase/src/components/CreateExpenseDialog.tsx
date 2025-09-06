@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { isValidDateFormat } from "@/helpers/utils";
+import { isValidDateFormat, today } from "@/helpers/utils";
 import useLoading from "@/hooks/useLoading";
 import { Expense, type ExpenseCategory, createExpenseRow, moneroStore } from "@/types/model/monero_service";
 import { toSnakeCase } from "@/utils/common";
@@ -20,8 +20,6 @@ interface Props {
 }
 
 function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expenseCategories, onSuccess }: Props) {
-  const today = new Date().toISOString().split("T")[0];
-
   const t = useTranslate();
   const [expense, setExpense] = useState(Expense.fromPartial({ ...initialExpense }));
   const requestState = useLoading(false);

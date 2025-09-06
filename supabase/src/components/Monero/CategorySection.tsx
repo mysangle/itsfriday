@@ -12,7 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 const CategorySection = observer(() => {
   const t = useTranslate();
-  const [categories, setCategoriess] = useState<ExpenseCategory[]>([]);
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const createDialog = useDialog();
   const editDialog = useDialog();
   const [editingCategory, setEditingCategory] = useState<ExpenseCategory | undefined>();
@@ -29,7 +29,7 @@ const CategorySection = observer(() => {
       }
 
       if (data) {
-        setCategoriess(data.map((category) => (toCamelCase(category))))
+        setCategories(data.map((category) => (toCamelCase(category))))
       }
     } catch (error: any) {
       console.error(error);
@@ -70,7 +70,7 @@ const CategorySection = observer(() => {
         </Button>
       </div>
       <div className="w-full flex flex-row justify-between items-center mt-6">
-        <div className="title-text">{t("libro.review-list")}</div>
+        <div className="title-text">{t("monero.category-list")}</div>
       </div>
       <div className="w-full overflow-x-auto">
         <div className="inline-block min-w-full align-middle border border-border rounded-lg">

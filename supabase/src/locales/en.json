@@ -67,6 +67,7 @@
     "by-calendar": "By Calendar",
     "by-category": "By Category",
     "category": "Category",
+    "category-list": "Category List",
     "create-a-category": "Create a category for an expense",
     "create-an-expense": "Create an expense",
     "date-used": "Date used",
@@ -75,7 +76,9 @@
     "id": "ID",
     "item": "Item",
     "name": "Name",
-    "price": "Price"
+    "price": "Price",
+    "total-price-this-month": "Total spending this month",
+    "total-price-this-year": "Total spending this year"
   },
   "setting": {
     "appearance-option": {

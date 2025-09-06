@@ -22,17 +22,14 @@ const ReviewSection = observer(() => {
   const [editingExpense, setEditingExpense] = useState<Expense | undefined>();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchCategories();
-        await fetchExpenses();
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
+    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      fetchExpenses();
+    }
+  }, [categories]);
 
   const fetchCategories = async () => {
     try {

@@ -103,7 +103,7 @@ const moneroStore = (() => {
     let { data, error } = await supabaseClient
       .from("expense_category")
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
     return { data, error: error != null ? toItsError(error) : null };
   };
 
