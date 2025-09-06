@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { isValidDateFormat } from "@/helpers/utils";
 import useLoading from "@/hooks/useLoading";
 import { BookReview, libroStore } from "@/types/model/libro_service";
 import { toSnakeCase } from "@/utils/common";
@@ -39,21 +40,6 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
       ...state,
     });
   };
-
-  function isValidDateReadFormat(dateStr: string): boolean {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-      console.error(dateStr + "success")
-      return false;
-    }
-
-    const [year, month, day] = dateStr.split("-").map(Number);
-    const date = new Date(year, month - 1, day);
-    return (
-      date.getFullYear() === year &&
-      date.getMonth() === month - 1 &&
-      date.getDate() === day
-    );
-  }
 
   const onPagesInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -99,7 +85,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
       toast.error("Rating should be between 0 and 5");
       return;
     }
-    if (review.dateRead !== undefined && !isValidDateReadFormat(review.dateRead)) {
+    if (review.dateRead !== undefined && !isValidDateFormat(review.dateRead)) {
       toast.error("Date read should be format like '" + defaultDateRead + "'");
       return;
     }

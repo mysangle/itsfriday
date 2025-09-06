@@ -4,32 +4,32 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { useDialog } from "@/hooks/useDialog";
-import { type BookReview, libroStore } from "@/types/model/libro_service";
+import CreateCategoryDialog from "../CreateCategoryDialog";
+import { type ExpenseCategory, moneroStore } from "@/types/model/monero_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
-import CreateReviewDialog from "../CreateReviewDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
-const ReviewSection = observer(() => {
+const CategorySection = observer(() => {
   const t = useTranslate();
-  const [reviews, setReviews] = useState<BookReview[]>([]);
+  const [categories, setCategoriess] = useState<ExpenseCategory[]>([]);
   const createDialog = useDialog();
   const editDialog = useDialog();
-  const [editingReview, setEditingReview] = useState<BookReview | undefined>();
+  const [editingCategory, setEditingCategory] = useState<ExpenseCategory | undefined>();
 
   useEffect(() => {
-    fetchReviews();
+    fetchCategories();
   }, []);
 
-  const fetchReviews = async () => {
+  const fetchCategories = async () => {
     try {
-      let { data, error } = await libroStore.fetchBookReviews()
+      let { data, error } = await moneroStore.fetchCategories()
       if (error != null) {
         throw error;
       }
 
       if (data) {
-        setReviews(data.map((review) => (toCamelCase(review))))
+        setCategoriess(data.map((category) => (toCamelCase(category))))
       }
     } catch (error: any) {
       console.error(error);
@@ -37,25 +37,25 @@ const ReviewSection = observer(() => {
     }
   };
 
-  const handleCreateReview = () => {
-    setEditingReview(undefined);
+  const handleCreateCategory = () => {
+    setEditingCategory(undefined);
     createDialog.open();
   };
 
-  const handleEditReview = (review: BookReview) => {
-    setEditingReview(review);
+  const handleEditCategory = (category: ExpenseCategory) => {
+    setEditingCategory(category);
     editDialog.open();
   };
 
-  const handleDeleteReview = async (review: BookReview) => {
-    const confirmed = window.confirm(t("common.delete-warning", { title: review.title }));
+  const handleDeleteCategory = async (category: ExpenseCategory) => {
+    const confirmed = window.confirm(t("common.delete-warning", { title: category.name }));
     if (confirmed) {
-      if (review.id !== undefined) {
-        let { error } = await libroStore.deleteBookReview(review.id)
+      if (category.id !== undefined) {
+        let { error } = await moneroStore.deleteCategory(category.id)
         if (error != null) {
           console.error(error);
         }
-        fetchReviews();
+        fetchCategories();
       }
     }
   };
@@ -63,8 +63,8 @@ const ReviewSection = observer(() => {
   return (
     <div className="w-full flex flex-col gap-2 pt-2 pb-4">
       <div className="w-full flex flex-col flex-row gap-2 pt-4 pb-4 justify-between items-center">
-        <p className="font-medium text-muted-foreground">{t("libro.create-a-review")}</p>
-        <Button onClick={handleCreateReview}>
+        <p className="font-medium text-muted-foreground">{t("monero.create-a-category")}</p>
+        <Button onClick={handleCreateCategory}>
           <PlusIcon className="w-4 h-4 mr-2" />
           {t("common.create")}
         </Button>
@@ -77,34 +77,20 @@ const ReviewSection = observer(() => {
           <table className="min-w-full divide-y divide-border">
             <thead>
               <tr className="text-sm font-semibold text-left text-foreground">
-                <th scope="col" className="px-3 py-2">
-                  {t("libro.genre")}
+                <th scope="col" className="px-3 py-2 text-right">
+                  {t("monero.id")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("libro.title")}
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  {t("libro.author") + " / " + t("libro.translator")}
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  {t("libro.pub-year")}
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  {t("libro.date-read")}
+                  {t("monero.name")}
                 </th>
                 <th scope="col" className="relative py-2 pl-3 pr-4"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {reviews.map((review) => (
-                <tr key={review.id} className="text-left">
-                  <td className="whitespace-nowrap px-3 py-2 text-right text-sm text-muted-foreground">{review.genre}</td>
-                  <td className="px-3 py-2 text-sm text-muted-foreground">{review.title}</td>
-                  <td className="px-3 py-2 text-sm text-muted-foreground">
-                    {review.author + (review.translator ? " / " + review.translator : "")}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-sm text-muted-foreground">{review.pubYear}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-sm text-muted-foreground">{review.dateRead}</td>
+              {categories.map((category) => (
+                <tr key={category.id} className="text-left">
+                  <td className="px-3 py-2 text-right text-sm text-muted-foreground">{category.id}</td>
+                  <td className="px-3 py-2 text-sm text-muted-foreground">{category.name}</td>
                   <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium flex justify-end">
                     <DropdownMenu modal={false}>
                       <DropdownMenuTrigger asChild>
@@ -114,9 +100,9 @@ const ReviewSection = observer(() => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" sideOffset={2}>
                         <>
-                          <DropdownMenuItem onClick={() => handleEditReview(review)}>{t("common.update")}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditCategory(category)}>{t("common.update")}</DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleDeleteReview(review)}
+                            onClick={() => handleDeleteCategory(category)}
                             className="text-destructive focus:text-destructive"
                           >
                             {t("common.delete")}
@@ -132,13 +118,13 @@ const ReviewSection = observer(() => {
         </div>
       </div>
 
-      {/* Create Review Dialog */}
-      <CreateReviewDialog open={createDialog.isOpen} onOpenChange={createDialog.setOpen} onSuccess={fetchReviews} />
+      {/* Create Category Dialog */}
+      <CreateCategoryDialog open={createDialog.isOpen} onOpenChange={createDialog.setOpen} onSuccess={fetchCategories} />
 
-      {/* Edit Review Dialog */}
-      <CreateReviewDialog open={editDialog.isOpen} onOpenChange={editDialog.setOpen} review={editingReview} onSuccess={fetchReviews} />
+      {/* Edit Category Dialog */}
+      <CreateCategoryDialog open={editDialog.isOpen} onOpenChange={editDialog.setOpen} category={editingCategory} onSuccess={fetchCategories} />
     </div>
   );
 });
 
-export default ReviewSection;
+export default CategorySection;

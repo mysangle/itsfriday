@@ -21,6 +21,7 @@
     "home": "Home",
     "itsfriday": "It's Friday",
     "libro": "Libro",
+    "monero": "Monero",
     "review": "Review",
     "sign-in": "Log in",
     "sign-out": "Log out",
@@ -61,6 +62,20 @@
   },
   "message": {
     "no-data": "No data found."
+  },
+  "monero": {
+    "by-calendar": "By Calendar",
+    "by-category": "By Category",
+    "category": "Category",
+    "create-a-category": "Create a category for an expense",
+    "create-an-expense": "Create an expense",
+    "date-used": "Date used",
+    "expense": "Expense",
+    "expense-list": "Expense List",
+    "id": "ID",
+    "item": "Item",
+    "name": "Name",
+    "price": "Price"
   },
   "setting": {
     "appearance-option": {
