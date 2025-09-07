@@ -18,7 +18,6 @@ interface Props {
 }
 
 function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSuccess }: Props) {
-  const tableName = "book_review";
   const defaultDateRead = "1397-05-15";
 
   const t = useTranslate();
