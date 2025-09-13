@@ -87,7 +87,7 @@ export interface MessageFns<T> {
   fromPartial(object: Partial<T>): T;
 }
 
-const moneroStore = (() => {
+const dineroStore = (() => {
   const insertCategory = async (category: any) => {
     const { error } = await supabaseClient
       .from("expense_category")
@@ -186,4 +186,4 @@ const moneroStore = (() => {
   };
 })();
 
-export { moneroStore }
+export { dineroStore }

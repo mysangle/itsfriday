@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isValidDateFormat, today } from "@/helpers/utils";
 import useLoading from "@/hooks/useLoading";
-import { Expense, type ExpenseCategory, createExpenseRow, moneroStore } from "@/types/model/monero_service";
+import { Expense, type ExpenseCategory, createExpenseRow, dineroStore } from "@/types/model/dinero_service";
 import { toSnakeCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 
@@ -72,7 +72,7 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
     try {
       requestState.setLoading();
       if (isCreating) {
-        const { error } = await moneroStore.insertExpense(toSnakeCase(createExpenseRow(expense)))
+        const { error } = await dineroStore.insertExpense(toSnakeCase(createExpenseRow(expense)))
         if (error != null) {
           throw error;
         }
@@ -89,7 +89,7 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
           updateExpense.dateUsed = expense.dateUsed;
         }
         if (expense.id !== undefined) {
-          const { error } = await moneroStore.updateExpense(expense.id, toSnakeCase(updateExpense))
+          const { error } = await dineroStore.updateExpense(expense.id, toSnakeCase(updateExpense))
           if (error != null) {
             throw error;
           }
@@ -112,16 +112,16 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{`${isCreating ? t("common.create") : t("common.edit")} ${t("monero.expense")}`}</DialogTitle>
+          <DialogTitle>{`${isCreating ? t("common.create") : t("common.edit")} ${t("dinero.expense")}`}</DialogTitle>
           <DialogDescription>create or update a expense</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="title">{t("monero.category")}</Label>
+            <Label htmlFor="title">{t("dinero.category")}</Label>
             <ExpenseCategorySelect categories={expenseCategories} value={expense.expenseCategory} onChange={handleCategorySelectChange} />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="date_used">{t("monero.date-used") + "(format: " + today + ")"}</Label>
+            <Label htmlFor="date_used">{t("dinero.date-used") + "(format: " + today + ")"}</Label>
             <Input
               id="date_used"
               type="text"
@@ -135,11 +135,11 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="title">{t("monero.item")}</Label>
+            <Label htmlFor="title">{t("dinero.item")}</Label>
             <Input
               id="item"
               type="text"
-              placeholder={t("monero.item")}
+              placeholder={t("dinero.item")}
               value={expense.item}
               onChange={(e) =>
                 setPartialExpense({
@@ -149,7 +149,7 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="price">{t("monero.price")}</Label>
+            <Label htmlFor="price">{t("dinero.price")}</Label>
             <Input
               id="price"
               type="text"

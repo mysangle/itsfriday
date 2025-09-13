@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { useDialog } from "@/hooks/useDialog";
 import CreateCategoryDialog from "../CreateCategoryDialog";
-import { type ExpenseCategory, moneroStore } from "@/types/model/monero_service";
+import { type ExpenseCategory, dineroStore } from "@/types/model/dinero_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -23,7 +23,7 @@ const CategorySection = observer(() => {
 
   const fetchCategories = async () => {
     try {
-      let { data, error } = await moneroStore.fetchCategories()
+      let { data, error } = await dineroStore.fetchCategories()
       if (error != null) {
         throw error;
       }
@@ -51,7 +51,7 @@ const CategorySection = observer(() => {
     const confirmed = window.confirm(t("common.delete-warning", { title: category.name }));
     if (confirmed) {
       if (category.id !== undefined) {
-        let { error } = await moneroStore.deleteCategory(category.id)
+        let { error } = await dineroStore.deleteCategory(category.id)
         if (error != null) {
           console.error(error);
         }
@@ -63,14 +63,14 @@ const CategorySection = observer(() => {
   return (
     <div className="w-full flex flex-col gap-2 pt-2 pb-4">
       <div className="w-full flex flex-col flex-row gap-2 pt-4 pb-4 justify-between items-center">
-        <p className="font-medium text-muted-foreground">{t("monero.create-a-category")}</p>
+        <p className="font-medium text-muted-foreground">{t("dinero.create-a-category")}</p>
         <Button onClick={handleCreateCategory}>
           <PlusIcon className="w-4 h-4 mr-2" />
           {t("common.create")}
         </Button>
       </div>
       <div className="w-full flex flex-row justify-between items-center mt-6">
-        <div className="title-text">{t("monero.category-list")}</div>
+        <div className="title-text">{t("dinero.category-list")}</div>
       </div>
       <div className="w-full overflow-x-auto">
         <div className="inline-block min-w-full align-middle border border-border rounded-lg">
@@ -78,10 +78,10 @@ const CategorySection = observer(() => {
             <thead>
               <tr className="text-sm font-semibold text-left text-foreground">
                 <th scope="col" className="px-3 py-2 text-right">
-                  {t("monero.id")}
+                  {t("dinero.id")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("monero.name")}
+                  {t("dinero.name")}
                 </th>
                 <th scope="col" className="relative py-2 pl-3 pr-4"></th>
               </tr>

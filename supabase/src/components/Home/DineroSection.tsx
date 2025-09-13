@@ -3,18 +3,25 @@ import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 import { toast } from "react-hot-toast";
 import { Separator } from "@/components/ui/separator";
-import { type MoneroYearMonthCategoryReport, homeStore } from "@/types/model/home_service";
-import { type ExpenseCategory, moneroStore } from "@/types/model/monero_service";
+import { thisMonth } from "@/helpers/utils";
+import { type DineroYearMonthCategoryReport, homeStore } from "@/types/model/home_service";
+import { type ExpenseCategory, dineroStore } from "@/types/model/dinero_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 
 type ReportItem = Map<string, any>
 const COLORS = ['#0088FE', '#ff5242ff', '#FFBB28', '#8884d8', '#00C49F'];
 
-const ChartByCategorySection = observer(() => {
+const DineroSection = observer(() => {
   const t = useTranslate();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPriceThisMonth, setTotalPriceThisMonth] = useState<number>(0);
   const [reports, setReports] = useState<Object[]>([]);
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+
+  useEffect(() => {
+    fetchThisYearTotalExpenses();
+  }, []);
 
   useEffect(() => {
     fetchCategories();
@@ -28,7 +35,7 @@ const ChartByCategorySection = observer(() => {
 
   const fetchCategories = async () => {
     try {
-      let { data, error } = await moneroStore.fetchCategories()
+      let { data, error } = await dineroStore.fetchCategories()
       if (error != null) {
         throw error;
       }
@@ -42,7 +49,7 @@ const ChartByCategorySection = observer(() => {
     }
   };
 
-  function convertToReportData(items: MoneroYearMonthCategoryReport[]): ReportItem {
+  function convertToReportData(items: DineroYearMonthCategoryReport[]): ReportItem {
     const data = new Map<string, any>();
     for (const category of categories) {
       if (category.id !== undefined) {
@@ -57,10 +64,18 @@ const ChartByCategorySection = observer(() => {
     return data;
   }
 
-  function fillEmptyMonths(data: MoneroYearMonthCategoryReport[]): Object[] {
+  function calculateTotalSpendingThisMonth(items: DineroYearMonthCategoryReport[]) {
+    let price = 0;
+    for (const item of items) {
+      price += item.price;
+    }
+    setTotalPriceThisMonth(price);
+  }
+
+  function fillEmptyMonths(data: DineroYearMonthCategoryReport[]): Object[] {
     // 1. create a list of months for the past 12 months
     const months: string[] = [];
-    const monthSet = new Map<string, MoneroYearMonthCategoryReport[]>();
+    const monthSet = new Map<string, DineroYearMonthCategoryReport[]>();
     const today = new Date();
     for (let i = -1; i < 12; i++) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
@@ -79,10 +94,27 @@ const ChartByCategorySection = observer(() => {
         data.set("yearMonth", month);
         filledData.push(data);
       }
+
+      if (month === thisMonth) {
+        calculateTotalSpendingThisMonth(data);
+      }
     }
 
     return filledData.map(m => Object.fromEntries(m));
   }
+
+  const fetchThisYearTotalExpenses = async () => {
+    try {
+      let { data, error } = await homeStore.fetchTotalExpensesThisYear()
+      if (error != null) {
+        throw error;
+      }
+      setTotalPrice(data);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message);
+    }
+  };
 
   const fetchReports = async () => {
     try {
@@ -92,7 +124,7 @@ const ChartByCategorySection = observer(() => {
       }
 
       if (data != null && categories.length > 0) {
-        const filledData = fillEmptyMonths((data as MoneroYearMonthCategoryReport[]).map((r) => toCamelCase(r)));
+        const filledData = fillEmptyMonths((data as DineroYearMonthCategoryReport[]).map((r) => toCamelCase(r)));
         setReports(filledData);
       }
     } catch (error: any) {
@@ -102,43 +134,43 @@ const ChartByCategorySection = observer(() => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col rounded-md justify-center items-start px-4 py-2 text-muted-foreground">
+    <div className="w-144 h-80 flex flex-col border border-dashed rounded-md justify-center items-start px-4 py-2 text-muted-foreground">
       <div className="flex items-center justify-start">
         <div className="space-y-1">
           <p className="flex flex-row justify-start items-center font-medium text-muted-foreground">
-            By Category
+            Dinero Report
           </p>
           <p className="text-sm text-left text-muted-foreground">
-            {t("monero.monthly-spending-by-category")}
+            {t("dinero.total-price-this-year")}: {totalPrice.toLocaleString()}
+          </p>
+          <p className="text-sm text-left text-muted-foreground">
+            {t("dinero.total-price-this-month")}: {totalPriceThisMonth.toLocaleString()}
           </p>
         </div>
       </div>
       <Separator className="mt-2 mb-4" />
-      <div className="w-full h-120 border border-dashed rounded-md px-4 py-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={reports}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="yearMonth" />
-            <YAxis />
-            <Tooltip cursor={false} />
-            <Legend />
-            {categories.map((entry, index) => (
-              <Bar key={index} dataKey={entry.name} name={entry.name} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
+      <ResponsiveContainer width="100%" height="70%">
+        <BarChart
+          data={reports}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="yearMonth" />
+          <YAxis />
+          <Tooltip cursor={false} />
+          <Legend />
+          {categories.map((entry, index) => (
+            <Bar key={index} dataKey={entry.name} stackId="b" name={entry.name} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 });
 
-export default ChartByCategorySection;
+export default DineroSection;

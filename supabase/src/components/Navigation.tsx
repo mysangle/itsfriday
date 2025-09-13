@@ -33,14 +33,14 @@ const Navigation = observer((props: Props) => {
     title: t("common.libro"),
     icon: <LibraryIcon className="w-6 h-auto shrink-0" />,
   };
-  const moneroNavLink: NavLinkItem = {
-    id: "header-monero",
-    path: Routes.MONERO,
-    title: t("common.monero"),
+  const dineroNavLink: NavLinkItem = {
+    id: "header-dinero",
+    path: Routes.DINERO,
+    title: t("common.dinero"),
     icon: <CreditCardIcon className="w-6 h-auto shrink-0" />,
   };
 
-  const navLinks: NavLinkItem[] = [homeNavLink, libroNavLink, moneroNavLink];
+  const navLinks: NavLinkItem[] = [homeNavLink, libroNavLink, dineroNavLink];
 
   return (
     <div className={cn("w-full px-1 py-4 flex flex-col justify-start items-start space-y-2 overflow-auto overflow-x-hidden hide-scrollbar shrink", className)}>

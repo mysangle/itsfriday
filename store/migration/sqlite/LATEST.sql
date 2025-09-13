@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS book_review (
 CREATE INDEX IF NOT EXISTS idx_book_review_user_id_date_read ON book_review (user_id, date_read);
 CREATE INDEX IF NOT EXISTS idx_book_review_book_id_date_read ON book_review (book_id, date_read);
 
--- MONERO service --
+-- DINERO service --
 
 -- category
 CREATE TABLE IF NOT EXISTS expense_category (

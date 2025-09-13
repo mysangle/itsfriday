@@ -6,7 +6,7 @@ export interface LibroYearMonthReport {
   count: number;
 }
 
-export interface MoneroYearMonthCategoryReport {
+export interface DineroYearMonthCategoryReport {
   yearMonth: string;
   categoryId: number;
   price: number;

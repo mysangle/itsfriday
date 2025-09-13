@@ -6,7 +6,7 @@ import ActivityCalendar from "../components/ActivityCalendar";
 import { MonthNavigator } from "../components/StatisticsView/MonthNavigator";
 import ExchangeSection from "@/components/Home/ExchangeSection";
 import LibroSection from "@/components/Home/LibroSection";
-import MoneroSection from "@/components/Home/MoneroSection";
+import DineroSection from "@/components/Home/DineroSection";
 
 const Home = observer(() => {
   const [selectedDate] = useState(new Date());
@@ -28,7 +28,7 @@ const Home = observer(() => {
           <ExchangeSection />
         </div>
         <div className="shrink-0 h-svh transition-all group mt-2 px-3 py-6 space-y-4 text-muted-foreground animate-fade-in">
-          <MoneroSection />
+          <DineroSection />
           <LibroSection />
         </div>
       </div>

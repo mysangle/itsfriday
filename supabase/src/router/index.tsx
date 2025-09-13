@@ -6,7 +6,7 @@ import Home from "@/pages/Home";
 import Loading from "@/pages/Loading";
 
 const Libro = lazy(() => import("@/pages/Libro"));
-const Monero = lazy(() => import("@/pages/Monero"));
+const Dinero = lazy(() => import("@/pages/Dinero"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const SignIn = lazy(() => import("@/pages/SignIn"));
 const SignUp = lazy(() => import("@/pages/SignUp"));
@@ -15,7 +15,7 @@ export enum Routes {
   ROOT = "/",
   AUTH = "/auth",
   LIBRO = "/libro",
-  MONERO = "/monero",
+  DINERO = "/dinero",
 }
 
 const router = createBrowserRouter([
@@ -61,10 +61,10 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: Routes.MONERO,
+            path: Routes.DINERO,
             element: (
               <Suspense fallback={<Loading />}>
-                <Monero />
+                <Dinero />
               </Suspense>
             ),
           },

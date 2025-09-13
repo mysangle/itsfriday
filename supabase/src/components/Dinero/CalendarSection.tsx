@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { Calendar } from "@/components/ui/calendar"
 import { Separator } from "@/components/ui/separator";
 import { formatDateKey } from "@/helpers/utils";
-import { type ExpenseByMonth, moneroStore } from "@/types/model/monero_service";
+import { type ExpenseByMonth, dineroStore } from "@/types/model/dinero_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 
@@ -32,7 +32,7 @@ const CalendarSection = observer(() => {
   const fetchExpensesByMonth = async () => {
     try {
       let { calendarStart, calendarEnd } = getCalendarRange(month);
-      let { data, error } = await moneroStore.fetchExpensesByStartAndEndDay(formatDateKey(calendarStart), formatDateKey(calendarEnd))
+      let { data, error } = await dineroStore.fetchExpensesByStartAndEndDay(formatDateKey(calendarStart), formatDateKey(calendarEnd))
       if (error != null) {
         throw error;
       }
@@ -91,7 +91,7 @@ const CalendarSection = observer(() => {
             By Calendar
           </p>
           <p className="text-sm text-left text-muted-foreground">
-            {t("monero.months-expenses")}
+            {t("dinero.months-expenses")}
           </p>
         </div>
       </div>

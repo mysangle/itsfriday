@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useLoading from "@/hooks/useLoading";
-import { ExpenseCategory, moneroStore } from "@/types/model/monero_service";
+import { ExpenseCategory, dineroStore } from "@/types/model/dinero_service";
 import { toSnakeCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 
@@ -46,7 +46,7 @@ function CreateCategoryDialog({ open, onOpenChange, category: initialCategory, o
     try {
       requestState.setLoading();
       if (isCreating) {
-        let { error } = await moneroStore.insertCategory(toSnakeCase(category))
+        let { error } = await dineroStore.insertCategory(toSnakeCase(category))
         if (error != null) {
           throw error;
         }
@@ -58,7 +58,7 @@ function CreateCategoryDialog({ open, onOpenChange, category: initialCategory, o
         }
         console.error(category.id);
         if (category.id !== undefined) {
-          let { error } = await moneroStore.updateCategory(category.id, toSnakeCase(updateCategory))
+          let { error } = await dineroStore.updateCategory(category.id, toSnakeCase(updateCategory))
           if (error != null) {
             throw error;
           }
@@ -80,16 +80,16 @@ function CreateCategoryDialog({ open, onOpenChange, category: initialCategory, o
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{`${isCreating ? t("common.create") : t("common.edit")} ${t("monero.category")}`}</DialogTitle>
+          <DialogTitle>{`${isCreating ? t("common.create") : t("common.edit")} ${t("dinero.category")}`}</DialogTitle>
           <DialogDescription>create or update a category</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="title">{t("monero.name")}</Label>
+            <Label htmlFor="title">{t("dinero.name")}</Label>
             <Input
               id="name"
               type="text"
-              placeholder={t("monero.name")}
+              placeholder={t("dinero.name")}
               value={category.name}
               onChange={(e) =>
                 setPartialCategory({

@@ -3,10 +3,10 @@ import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import CategorySection from "@/components/Monero/CategorySection";
-import CalendarSection from "@/components/Monero/CalendarSection";
-import ChartByCategorySection from "@/components/Monero/ChartByCategorySection";
-import ExpenseSection from "@/components/Monero/ExpenseSection";
+import CategorySection from "@/components/Dinero/CategorySection";
+import CalendarSection from "@/components/Dinero/CalendarSection";
+import ChartByCategorySection from "@/components/Dinero/ChartByCategorySection";
+import ExpenseSection from "@/components/Dinero/ExpenseSection";
 import SectionMenuItem from "@/components/SectionMenuItem";
 import { useTranslate } from "@/utils/i18n";
 
@@ -25,7 +25,7 @@ const SECTION_ICON_MAP: Record<SettingSection, LucideIcon> = {
   "by-category": ChartBarIcon,
 };
 
-const Monero = observer(() => {
+const Dinero = observer(() => {
   const t = useTranslate();
   const location = useLocation();
   const [state, setState] = useState<State>({
@@ -59,7 +59,7 @@ const Monero = observer(() => {
             {BASIC_SECTIONS.map((item) => (
               <SectionMenuItem
                 key={item}
-                text={t(`monero.${item}`)}
+                text={t(`dinero.${item}`)}
                 icon={SECTION_ICON_MAP[item]}
                 isSelected={state.selectedSection === item}
                 onClick={() => handleSectionSelectorItemClick(item)}
@@ -71,7 +71,7 @@ const Monero = observer(() => {
             {CHART_SECTIONS.map((item) => (
               <SectionMenuItem
                 key={item}
-                text={t(`monero.${item}`)}
+                text={t(`dinero.${item}`)}
                 icon={SECTION_ICON_MAP[item]}
                 isSelected={state.selectedSection === item}
                 onClick={() => handleSectionSelectorItemClick(item)}
@@ -88,7 +88,7 @@ const Monero = observer(() => {
               <SelectContent>
                 {settingsSectionList.map((settingSection) => (
                   <SelectItem key={settingSection} value={settingSection}>
-                    {t(`monero.${settingSection}`)}
+                    {t(`dinero.${settingSection}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -109,4 +109,4 @@ const Monero = observer(() => {
   )
 });
 
-export default Monero;
+export default Dinero;

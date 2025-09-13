@@ -7,7 +7,7 @@ import { useDialog } from "@/hooks/useDialog";
 import useNavigateTo from "@/hooks/useNavigateTo";
 import { Routes } from "@/router";
 import CreateExpenseDialog from "../CreateExpenseDialog";
-import { type Expense, type ExpenseCategory, moneroStore } from "@/types/model/monero_service";
+import { type Expense, type ExpenseCategory, dineroStore } from "@/types/model/dinero_service";
 import { toCamelCase } from "@/utils/common";
 import { useTranslate } from "@/utils/i18n";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -33,14 +33,14 @@ const ReviewSection = observer(() => {
 
   const fetchCategories = async () => {
     try {
-      let { data, error } = await moneroStore.fetchCategories()
+      let { data, error } = await dineroStore.fetchCategories()
       if (error != null) {
         throw error;
       }
 
       if (data) {
         if (data.length === 0) {
-          navigateTo(Routes.MONERO + "#category");
+          navigateTo(Routes.DINERO + "#category");
           return;
         }
         setCategories(data.map((category) => (toCamelCase(category))))
@@ -53,7 +53,7 @@ const ReviewSection = observer(() => {
 
   const fetchExpenses = async () => {
     try {
-      let { data, error } = await moneroStore.fetchExpenses()
+      let { data, error } = await dineroStore.fetchExpenses()
       if (error != null) {
         throw error;
       }
@@ -81,7 +81,7 @@ const ReviewSection = observer(() => {
     const confirmed = window.confirm(t("common.delete-warning", { title: expense.item }));
     if (confirmed) {
       if (expense.id !== undefined) {
-        let { error } = await moneroStore.deleteExpense(expense.id)
+        let { error } = await dineroStore.deleteExpense(expense.id)
         if (error != null) {
           console.error(error);
         }
@@ -93,14 +93,14 @@ const ReviewSection = observer(() => {
   return (
     <div className="w-full flex flex-col gap-2 pt-2 pb-4">
       <div className="w-full flex flex-col flex-row gap-2 pt-4 pb-4 justify-between items-center">
-        <p className="font-medium text-muted-foreground">{t("monero.create-an-expense")}</p>
+        <p className="font-medium text-muted-foreground">{t("dinero.create-an-expense")}</p>
         <Button onClick={handleCreateExpense}>
           <PlusIcon className="w-4 h-4 mr-2" />
           {t("common.create")}
         </Button>
       </div>
       <div className="w-full flex flex-row justify-between items-center mt-6">
-        <div className="title-text">{t("monero.expense-list")}</div>
+        <div className="title-text">{t("dinero.expense-list")}</div>
       </div>
       <div className="w-full overflow-x-auto">
         <div className="inline-block min-w-full align-middle border border-border rounded-lg">
@@ -108,16 +108,16 @@ const ReviewSection = observer(() => {
             <thead>
               <tr className="text-sm font-semibold text-left text-foreground">
                 <th scope="col" className="px-3 py-2">
-                  {t("monero.category")}
+                  {t("dinero.category")}
                 </th>
                 <th scope="col" className="px-3 py-2">
                   {t("libro.date-read")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("monero.item")}
+                  {t("dinero.item")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("monero.price")}
+                  {t("dinero.price")}
                 </th>
                 <th scope="col" className="relative py-2 pl-3 pr-4"></th>
               </tr>

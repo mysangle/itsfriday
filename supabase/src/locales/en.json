@@ -17,11 +17,11 @@
     "dashboard": "Dashboard",
     "delete": "Delete",
     "delete-warning": "Are you sure to delete '{{title}}'? THIS ACTION IS IRREVERSIBLE",
+    "dinero": "Dinero",
     "edit": "Edit",
     "home": "Home",
     "itsfriday": "It's Friday",
     "libro": "Libro",
-    "monero": "Monero",
     "review": "Review",
     "sign-in": "Log in",
     "sign-out": "Log out",
@@ -63,7 +63,7 @@
   "message": {
     "no-data": "No data found."
   },
-  "monero": {
+  "dinero": {
     "by-calendar": "By Calendar",
     "by-category": "By Category",
     "category": "Category",

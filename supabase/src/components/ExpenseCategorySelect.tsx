@@ -1,7 +1,7 @@
 import { GlobeIcon } from "lucide-react";
 import { type FC } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { type ExpenseCategory } from "@/types/model/monero_service";
+import { type ExpenseCategory } from "@/types/model/dinero_service";
 
 interface Props {
   categories: ExpenseCategory[],
