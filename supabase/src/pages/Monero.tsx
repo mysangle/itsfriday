@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CategorySection from "@/components/Monero/CategorySection";
+import CalendarSection from "@/components/Monero/CalendarSection";
 import ChartByCategorySection from "@/components/Monero/ChartByCategorySection";
 import ExpenseSection from "@/components/Monero/ExpenseSection";
 import SectionMenuItem from "@/components/SectionMenuItem";
@@ -16,7 +17,7 @@ interface State {
 }
 
 const BASIC_SECTIONS: SettingSection[] = ["expense", "category"];
-const CHART_SECTIONS: SettingSection[] = ["by-category"];
+const CHART_SECTIONS: SettingSection[] = ["by-calendar", "by-category"];
 const SECTION_ICON_MAP: Record<SettingSection, LucideIcon> = {
   expense: WalletCardsIcon,
   category: ListIcon,
@@ -97,6 +98,8 @@ const Monero = observer(() => {
             <ExpenseSection />
           ) : state.selectedSection === "category" ? (
             <CategorySection />
+          ) : state.selectedSection === "by-calendar" ? (
+            <CalendarSection />
           ) : state.selectedSection === "by-category" ? (
             <ChartByCategorySection />
           ) : null}

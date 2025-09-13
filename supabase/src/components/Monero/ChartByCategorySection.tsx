@@ -114,29 +114,29 @@ const ChartByCategorySection = observer(() => {
         </div>
       </div>
       <Separator className="mt-2 mb-4" />
-      <div className="w-full h-80 border border-dashed rounded-md px-4 py-2">
+      <div className="w-full h-120 border border-dashed rounded-md px-4 py-2">
         <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={reports}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="yearMonth" />
-          <YAxis />
-          <Tooltip cursor={false} />
-          <Legend />
-          {categories.map((entry, index) => (
-            <Bar key={index} dataKey={entry.name} name={entry.name} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+          <BarChart
+            data={reports}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="yearMonth" />
+            <YAxis />
+            <Tooltip cursor={false} />
+            <Legend />
+            {categories.map((entry, index) => (
+              <Bar key={index} dataKey={entry.name} name={entry.name} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-      
+
     </div>
   );
 });

@@ -1,6 +1,10 @@
 import { supabaseClient } from "@/store";
 import { toItsError } from "./itserror";
 
+export interface ExpenseByMonth {
+  dateUsed: string;
+  price: number;
+}
 export interface ExpenseRow {
   item: string;
   price: number;
@@ -156,6 +160,18 @@ const moneroStore = (() => {
     return { error: error != null ? toItsError(error) : null };
   }
 
+  const fetchExpensesByMonth = async (month: string) => {
+    let { data, error } = await supabaseClient
+      .rpc('stats_expense_price_by_month', { target_month: month });
+    return { data, error };
+  };
+
+  const fetchExpensesByStartAndEndDay = async (startDay: string, endDay: string) => {
+    let { data, error } = await supabaseClient
+      .rpc('stats_expense_price_by_start_and_end_day', { start_day: startDay, end_day: endDay });
+    return { data, error };
+  };
+
   return {
     insertCategory,
     updateCategory,
@@ -165,6 +181,8 @@ const moneroStore = (() => {
     deleteExpense,
     insertExpense,
     updateExpense,
+    fetchExpensesByMonth,
+    fetchExpensesByStartAndEndDay,
   };
 })();
 
