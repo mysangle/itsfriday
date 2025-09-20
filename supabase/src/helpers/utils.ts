@@ -1,5 +1,5 @@
 
-export const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+export const today = toLocalISOString(new Date()).split("T")[0]; // YYYY-MM-DD
 export const thisMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
 
 // export const formatDateKey = (date: Date) => {
@@ -38,4 +38,16 @@ export function isValidDateFormat(dateStr: string): boolean {
     date.getMonth() === month - 1 &&
     date.getDate() === day
   );
+}
+
+function toLocalISOString(date: Date): string {
+  const offset = date.getTimezoneOffset();
+  const offsetHours = Math.floor(Math.abs(offset) / 60);
+  const offsetMinutes = Math.abs(offset) % 60;
+  const offsetSign = offset <= 0 ? '+' : '-';
+  
+  const localDate = new Date(date.getTime() - (offset * 60000));
+  const isoString = localDate.toISOString().slice(0, -1);
+  
+  return `${isoString}${offsetSign}${offsetHours.toString().padStart(2, '0')}:${offsetMinutes.toString().padStart(2, '0')}`;
 }
