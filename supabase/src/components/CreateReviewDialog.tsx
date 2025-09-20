@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { isValidDateFormat } from "@/helpers/utils";
+import { isValidDateFormat, today } from "@/helpers/utils";
 import useLoading from "@/hooks/useLoading";
 import { BookReview, libroStore } from "@/types/model/libro_service";
 import { toSnakeCase } from "@/utils/common";
@@ -18,8 +18,6 @@ interface Props {
 }
 
 function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSuccess }: Props) {
-  const defaultDateRead = "1397-05-15";
-
   const t = useTranslate();
   const [review, setReview] = useState(BookReview.fromPartial({ ...initialReview }));
   const requestState = useLoading(false);
@@ -85,7 +83,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
       return;
     }
     if (review.dateRead !== undefined && !isValidDateFormat(review.dateRead)) {
-      toast.error("Date read should be format like '" + defaultDateRead + "'");
+      toast.error("Date read should be format like '" + today + "'");
       return;
     }
 
@@ -261,11 +259,11 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="date_read">{t("libro.date-read") + "(format: " + defaultDateRead + ")"}</Label>
+            <Label htmlFor="date_read">{t("libro.date-read") + "(format: " + today + ")"}</Label>
             <Input
               id="date_read"
               type="text"
-              placeholder={defaultDateRead}
+              placeholder={today}
               value={review.dateRead}
               onChange={(e) =>
                 setPartialReview({
