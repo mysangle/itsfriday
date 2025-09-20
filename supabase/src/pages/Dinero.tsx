@@ -29,7 +29,7 @@ const Dinero = observer(() => {
   const t = useTranslate();
   const location = useLocation();
   const [state, setState] = useState<State>({
-    selectedSection: "expense",
+    selectedSection: "by-calendar",
   });
 
   const settingsSectionList = [...BASIC_SECTIONS, ...CHART_SECTIONS];
@@ -38,7 +38,7 @@ const Dinero = observer(() => {
     let hash = location.hash.slice(1) as SettingSection;
     // If the hash is not a valid section, redirect to the default section.
     if (![...BASIC_SECTIONS, ...CHART_SECTIONS].includes(hash)) {
-      hash = "expense";
+      hash = "by-calendar";
     }
 
     setState({
