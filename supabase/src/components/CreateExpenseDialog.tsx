@@ -80,7 +80,7 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
       } else {
         const updateExpense: Record<string, any> = {};
         if (expense.item !== initialExpense?.item) {
-          updateExpense.title = expense.item;
+          updateExpense.item = expense.item;
         }
         if (expense.price !== initialExpense?.price) {
           updateExpense.price = expense.price;
@@ -135,7 +135,7 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="title">{t("dinero.item")}</Label>
+            <Label htmlFor="item">{t("dinero.item")}</Label>
             <Input
               id="item"
               type="text"
