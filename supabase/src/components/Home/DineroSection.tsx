@@ -90,13 +90,13 @@ const DineroSection = observer(() => {
     for (const month of months) {
       const dataArray = monthSet.get(month);
       if (dataArray !== undefined) {
-        const data = convertToReportData(dataArray);
-        data.set("yearMonth", month);
-        filledData.push(data);
-      }
+        const reportData = convertToReportData(dataArray);
+        reportData.set("yearMonth", month);
+        filledData.push(reportData);
 
-      if (month === thisMonth) {
-        calculateTotalSpendingThisMonth(data);
+        if (month === thisMonth) {
+          calculateTotalSpendingThisMonth(dataArray);
+        }
       }
     }
 
@@ -141,10 +141,10 @@ const DineroSection = observer(() => {
             Dinero Report
           </p>
           <p className="text-sm text-left text-muted-foreground">
-            {t("dinero.total-price-this-year")}: {totalPrice.toLocaleString()}
+            {t("dinero.total-price-this-month")}: {totalPriceThisMonth.toLocaleString()}
           </p>
           <p className="text-sm text-left text-muted-foreground">
-            {t("dinero.total-price-this-month")}: {totalPriceThisMonth.toLocaleString()}
+            {t("dinero.total-price-this-year")}: {totalPrice.toLocaleString()}
           </p>
         </div>
       </div>
