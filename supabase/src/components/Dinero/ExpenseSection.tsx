@@ -111,7 +111,7 @@ const ReviewSection = observer(() => {
                   {t("dinero.category")}
                 </th>
                 <th scope="col" className="px-3 py-2">
-                  {t("libro.date-read")}
+                  {t("dinero.date-used")}
                 </th>
                 <th scope="col" className="px-3 py-2">
                   {t("dinero.item")}

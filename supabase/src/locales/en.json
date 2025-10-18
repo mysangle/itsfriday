@@ -39,6 +39,25 @@
     "tue": "Tue",
     "wed": "Wed"
   },
+  "dinero": {
+    "by-calendar": "By Calendar",
+    "by-category": "By Category",
+    "category": "Category",
+    "category-list": "Category List",
+    "create-a-category": "Create a category for an expense",
+    "create-an-expense": "Create an expense",
+    "date-used": "Date used",
+    "expense": "Expense",
+    "monthly-spending-by-category": "Monthly spending by category",
+    "months-expenses": "Month's expenses",
+    "expense-list": "Expense List",
+    "id": "ID",
+    "item": "Item",
+    "name": "Name",
+    "price": "Price",
+    "total-price-this-month": "Total spending this month",
+    "total-price-this-year": "Total spending this year"
+  },
   "libro": {
     "author": "Author",
     "book": "Book",
@@ -62,25 +81,6 @@
   },
   "message": {
     "no-data": "No data found."
-  },
-  "dinero": {
-    "by-calendar": "By Calendar",
-    "by-category": "By Category",
-    "category": "Category",
-    "category-list": "Category List",
-    "create-a-category": "Create a category for an expense",
-    "create-an-expense": "Create an expense",
-    "date-used": "Date used",
-    "expense": "Expense",
-    "monthly-spending-by-category": "Monthly spending by category",
-    "months-expenses": "Month's expenses",
-    "expense-list": "Expense List",
-    "id": "ID",
-    "item": "Item",
-    "name": "Name",
-    "price": "Price",
-    "total-price-this-month": "Total spending this month",
-    "total-price-this-year": "Total spending this year"
   },
   "setting": {
     "appearance-option": {
