@@ -23,7 +23,7 @@ const ReviewSection = observer(() => {
 
   const fetchReviews = async () => {
     try {
-      let { data, error } = await libroStore.fetchBookReviews()
+      let { data, error } = await libroStore.fetchBookReviews(50)
       if (error != null) {
         throw error;
       }
@@ -77,7 +77,7 @@ const ReviewSection = observer(() => {
           <table className="min-w-full divide-y divide-border">
             <thead>
               <tr className="text-sm font-semibold text-left text-foreground">
-                <th scope="col" className="px-3 py-2">
+                <th scope="col" className="text-right px-3 py-2">
                   {t("libro.genre")}
                 </th>
                 <th scope="col" className="px-3 py-2">

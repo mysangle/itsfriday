@@ -53,7 +53,7 @@ const ReviewSection = observer(() => {
 
   const fetchExpenses = async () => {
     try {
-      let { data, error } = await dineroStore.fetchExpenses()
+      let { data, error } = await dineroStore.fetchExpenses(50)
       if (error != null) {
         throw error;
       }
@@ -106,7 +106,7 @@ const ReviewSection = observer(() => {
         <div className="inline-block min-w-full align-middle border border-border rounded-lg">
           <table className="min-w-full divide-y divide-border">
             <thead>
-              <tr className="text-sm font-semibold text-left text-foreground">
+              <tr className="text-right text-sm font-semibold text-left text-foreground">
                 <th scope="col" className="px-3 py-2">
                   {t("dinero.category")}
                 </th>
@@ -124,7 +124,7 @@ const ReviewSection = observer(() => {
             </thead>
             <tbody className="divide-y divide-border">
               {expenses.map((expense) => (
-                <tr key={expense.id} className="text-left">
+                <tr key={expense.id} className="text-right">
                   <td className="px-3 py-2 text-sm text-muted-foreground">{expense.expenseCategory.name}</td>
                   <td className="whitespace-nowrap px-3 py-2 text-sm text-muted-foreground">{expense.dateUsed}</td>
                   <td className="whitespace-nowrap px-3 py-2 text-sm text-muted-foreground">{expense.item}</td>

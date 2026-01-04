@@ -79,6 +79,9 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
         toast.success("Create expense successfully");
       } else {
         const updateExpense: Record<string, any> = {};
+        if (expense.expenseCategory !== initialExpense?.expenseCategory) {
+          updateExpense.categoryId = expense.expenseCategory.id
+        }
         if (expense.item !== initialExpense?.item) {
           updateExpense.item = expense.item;
         }

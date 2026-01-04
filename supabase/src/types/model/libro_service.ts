@@ -73,10 +73,11 @@ const libroStore = (() => {
     return { error: error != null ? toItsError(error) : null };
   }
 
-  const fetchBookReviews = async () => {
+  const fetchBookReviews = async (count: number = 100) => {
     let { data, error } = await supabaseClient
       .from("book_review")
       .select('*')
+      .limit(count)
       .order('date_read', { ascending: false });
     return { data, error: error != null ? toItsError(error) : null };
   };

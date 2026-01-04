@@ -119,7 +119,7 @@ const dineroStore = (() => {
     return { error: error != null ? toItsError(error) : null }
   };
 
-  const fetchExpenses = async () => {
+  const fetchExpenses = async (count: number = 100) => {
     let { data, error } = await supabaseClient
       .from("expense")
       .select(`
@@ -133,6 +133,7 @@ const dineroStore = (() => {
           name
         )
       `)
+      .limit(count)
       .order('date_used', { ascending: false });
     return { data, error: error != null ? toItsError(error) : null };
   };
