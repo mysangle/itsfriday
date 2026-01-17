@@ -8,6 +8,7 @@ import ExchangeSection from "@/components/Home/ExchangeSection";
 import LibroSection from "@/components/Home/LibroSection";
 import DineroSection from "@/components/Home/DineroSection";
 import WorldClockSection from "@/components/Home/WorldClockSection";
+import YearProgressSection from "@/components/Home/YearProgressSection";
 
 const Home = observer(() => {
   const [selectedDate] = useState(new Date());
@@ -28,6 +29,7 @@ const Home = observer(() => {
           </div>
           <ExchangeSection />
           <WorldClockSection />
+          <YearProgressSection />
         </div>
         <div className="shrink-0 h-svh transition-all group mt-2 px-3 py-6 space-y-4 text-muted-foreground animate-fade-in">
           <DineroSection />
