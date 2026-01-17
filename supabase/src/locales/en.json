@@ -88,5 +88,10 @@
       "light": "Always light",
       "system": "Follow system"
     }
+  },
+  "yearprogress": {
+    "complete": "{{year}} is {{percentage}}% complete",
+    "elapsed": "{{elapsed}} days elapsed",
+    "remaining": "{{remaining}} days remaining"
   }
 }
