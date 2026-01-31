@@ -65,6 +65,12 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
     })
   };
 
+  const handleCopyDateUsed = () => {
+    setPartialReview({
+      dateRead: today,
+    })
+  }
+
   const handleConfirm = async () => {
     if (isCreating && (!review.title || !review.author)) {
       toast.error("Title and author cannot be empty");
@@ -259,7 +265,7 @@ function CreateReviewDialog({ open, onOpenChange, review: initialReview, onSucce
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="date_read">{t("libro.date-read") + "(format: " + today + ")"}</Label>
+            <Label htmlFor="date_read" onClick={handleCopyDateUsed}>{t("libro.date-read") + "(format: " + today + ")"}</Label>
             <Input
               id="date_read"
               type="text"

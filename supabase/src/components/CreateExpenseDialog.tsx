@@ -40,6 +40,12 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
     });
   };
 
+  const handleCopyDateUsed = () => {
+    setPartialExpense({
+      dateUsed: today,
+    })
+  }
+
   const handleCategorySelectChange = async (category: ExpenseCategory) => {
     setPartialExpense({
       expenseCategory: category,
@@ -124,7 +130,7 @@ function CreateExpenseDialog({ open, onOpenChange, expense: initialExpense, expe
             <ExpenseCategorySelect categories={expenseCategories} value={expense.expenseCategory} onChange={handleCategorySelectChange} />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="date_used">{t("dinero.date-used") + "(format: " + today + ")"}</Label>
+            <Label htmlFor="date_used" onClick={handleCopyDateUsed}>{t("dinero.date-used") + "(format: " + today + ")"}</Label>
             <Input
               id="date_used"
               type="text"
